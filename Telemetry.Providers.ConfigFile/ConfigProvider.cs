@@ -19,10 +19,10 @@ namespace Telemetry.Providers.ConfigFile
                 ConfigurationManager.GetSection("activationSection") as ActivationSection;
         }
 
-        public bool IsActive(ImportanceLevel level, 
-            IReadOnlyDictionary<string, string> tags)
+        public bool IsActive(ImportanceLevel minMetricLevel, 
+            IReadOnlyDictionary<string, string> activationTokens)
         {
-            if (!_config.Enable)
+            if (minMetricLevel < _config.MinImportance)
                 return false;
             //if (level < _config.Excludes.any.MinImportance)
             //    return false;

@@ -14,39 +14,43 @@ namespace Telemetry.Providers.ConfigFile
     [DebuggerTypeProxy(typeof(DebugView))]
     public class ActivationSection : ConfigurationSection
     {
-        #region Enable
+        #region MinImportance
 
-        // Create a "remoteOnly" attribute.
-        [ConfigurationProperty("enable",
-            DefaultValue = "true",
+        [ConfigurationProperty("min-importance",
+            DefaultValue = nameof(ImportanceLevel.Normal),
             IsRequired = false)]
-        public Boolean Enable
+        //[RegexStringValidator("(Low|Normal|High)")]
+        //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
+        public ImportanceLevel MinImportance
         {
             get
             {
-                return (bool)this["enable"];
+                object val = this["min-importance"];
+                if (val == null)
+                    return 0;
+                return (ImportanceLevel)val;
             }
             set
             {
-                this["enable"] = value;
+                this["min-importance"] = value;
             }
         }
 
-        #endregion // Enable
+        #endregion // MinImportance
 
-        #region Excludes
+        #region Limits
 
         [ConfigurationProperty("", IsDefaultCollection = true)]
-        public ExcludeCollection Excludes
+        public LimitToCollection Limits
         {
             get
             {
-                var hostCollection = (ExcludeCollection)base[""];
+                var hostCollection = (LimitToCollection)base[""];
                 return hostCollection;
             }
         }
 
-        #endregion // Excludes
+        #endregion // Limits
 
         #region DebugView
 
@@ -60,20 +64,19 @@ namespace Telemetry.Providers.ConfigFile
             }
 
 
-            //[DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-            public Boolean Enable => _instance.Enable;
+            public ImportanceLevel MinImportance => _instance.MinImportance;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ExcludeConfigElement[] Excludes
+            public LimitToConfigElement[] Limits
             {
                 get
                 {
                     return Get().ToArray();
-                    IEnumerable<ExcludeConfigElement> Get()
+                    IEnumerable<LimitToConfigElement> Get()
                     {
-                        foreach (var exclude in _instance.Excludes)
+                        foreach (var exclude in _instance.Limits)
                         {
-                            yield return (ExcludeConfigElement)exclude;
+                            yield return (LimitToConfigElement)exclude;
                         }
                     }
                 }

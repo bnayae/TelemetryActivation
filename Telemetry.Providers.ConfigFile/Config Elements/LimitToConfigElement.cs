@@ -12,32 +12,32 @@ using System.Threading.Tasks;
 namespace Telemetry.Providers.ConfigFile
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("Exclude: {MinImportance}")]
-    public class ExcludeConfigElement : ConfigurationElement
+    [DebuggerDisplay("Limit To: {Importance}")]
+    public class LimitToConfigElement : ConfigurationElement, IEquatable<LimitToConfigElement>
     {
-        #region MinImportance
+        #region Importance
 
-        [ConfigurationProperty("min-importance",
+        [ConfigurationProperty("importance",
             DefaultValue = nameof(ImportanceLevel.Normal),
             IsRequired = false)]
         //[RegexStringValidator("(Low|Normal|High)")]
         //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public ImportanceLevel MinImportance
+        public ImportanceLevel Importance
         {
             get
             {
-                object val = this["min-importance"];
+                object val = this["importance"];
                 if (val == null)
                     return 0;
                 return (ImportanceLevel)val;
             }
             set
             {
-                this["min-importance"] = value;
+                this["importance"] = value;
             }
         }
 
-        #endregion // MinImportance
+        #endregion // Importance
 
         #region Filters
 
@@ -53,16 +53,16 @@ namespace Telemetry.Providers.ConfigFile
 
         internal class DebugView
         {
-            private ExcludeConfigElement _instance;
+            private LimitToConfigElement _instance;
 
-            public DebugView(ExcludeConfigElement instance)
+            public DebugView(LimitToConfigElement instance)
             {
                 this._instance = instance;
             }
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MinImportance => _instance.MinImportance;
+            public ImportanceLevel MinImportance => _instance.Importance;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public FilterConfigElement[] Filters
@@ -82,5 +82,44 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // DebugView
+
+        #region Equality Pattern
+
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as LimitToConfigElement);
+        }
+
+        public bool Equals(LimitToConfigElement other)
+        {
+            return other != null &&
+                   Importance == other.Importance &&
+                   EqualityComparer<FilterCollection>.Default.Equals(Filters, other.Filters);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1095595053;
+            hashCode = hashCode * -1521134295 + Importance.GetHashCode();
+            foreach (var filter in Filters)
+            {
+                hashCode = hashCode * -1521134295 + filter.GetHashCode();
+            }
+
+            return hashCode;
+        }
+
+        public static bool operator ==(LimitToConfigElement element1, LimitToConfigElement element2)
+        {
+            return EqualityComparer<LimitToConfigElement>.Default.Equals(element1, element2);
+        }
+
+        public static bool operator !=(LimitToConfigElement element1, LimitToConfigElement element2)
+        {
+            return !(element1 == element2);
+        }
+
+        #endregion // Equality Pattern
     }
 }

@@ -41,9 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config Elements\ExcludeCollection.cs" />
+    <Compile Include="Config Elements\LimitToCollection.cs" />
     <Compile Include="Config Elements\ActivationSection.cs" />
-    <Compile Include="Config Elements\ExcludeConfigElement.cs" />
+    <Compile Include="Config Elements\LimitToConfigElement.cs" />
     <Compile Include="Config Elements\FilterConfigElement.cs" />
     <Compile Include="ConfigProvider.cs" />
     <Compile Include="Config Elements\FilterCollection.cs" />

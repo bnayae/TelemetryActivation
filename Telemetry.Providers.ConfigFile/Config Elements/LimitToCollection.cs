@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    public class ExcludeCollection : ConfigurationElementCollection
+    public class LimitToCollection : ConfigurationElementCollection
     {
         #region CollectionType
 
@@ -29,7 +29,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new ExcludeConfigElement();
+            return new LimitToConfigElement();
         }
 
         #endregion // CreateNewElement
@@ -38,7 +38,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override Object GetElementKey(ConfigurationElement element)
         {
-            return ((ExcludeConfigElement)element).MinImportance;
+            return ((LimitToConfigElement)element).GetHashCode();
         }
 
         #endregion // GetElementKey
@@ -56,7 +56,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override string ElementName
         {
-            get { return "exclude"; }
+            get { return "limit-to"; }
         }
 
         #endregion // ElementName

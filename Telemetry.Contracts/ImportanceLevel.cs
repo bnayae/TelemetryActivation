@@ -8,6 +8,10 @@ namespace Contracts
     {
         Low,
         Normal,
-        High
+        High,
+        /// <summary>
+        /// The critical cannot be switched off
+        /// </summary>
+        Critical
     }
 }
