@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    public class FilterCollection : ConfigurationElementCollection
+    public class FilterCollection : 
+        ConfigurationElementCollection,
+        IEnumerable<ActivationFilter>
     {
         #region this[int index]
 
@@ -57,5 +59,17 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // ElementName
+
+        #region IEnumerable<ActivationFilter> Members
+
+        IEnumerator<ActivationFilter> IEnumerable<ActivationFilter>.GetEnumerator()
+        {
+            foreach (FilterConfigElement element in this)
+            {
+                yield return new ActivationFilter(element.Path);
+            }
+        }
+
+        #endregion // IEnumerable<ActivationFilter> Members
     }
 }

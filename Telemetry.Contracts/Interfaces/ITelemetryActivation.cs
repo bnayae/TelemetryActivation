@@ -4,10 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace Contracts
 {
-    public interface IMetricsConfig
+    public interface ITelemetryActivation
     {
         bool IsActive(
-            ImportanceLevel level,
-            IReadOnlyDictionary<string, string> tags);
+            ImportanceLevel metricLevel,
+            string ComponentTag = null);
     }
 }

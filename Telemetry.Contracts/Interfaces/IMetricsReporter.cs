@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Contracts
 {
-    public interface IMetricsReporter
+    public interface IMetricsReporter: IDisposable
     {
         void Count(
                     ImportanceLevel importance = ImportanceLevel.Normal,

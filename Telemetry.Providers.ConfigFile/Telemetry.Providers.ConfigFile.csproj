@@ -31,6 +31,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,7 +50,7 @@
     <Compile Include="Config Elements\ExtendConfigElement.cs" />
     <Compile Include="Config Elements\ConstrictConfigElement.cs" />
     <Compile Include="Config Elements\FilterConfigElement.cs" />
-    <Compile Include="ConfigProvider.cs" />
+    <Compile Include="ConfigActivationProvider.cs" />
     <Compile Include="Config Elements\FilterCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,6 +59,13 @@
       <Project>{cf90b0f0-b4e3-40ee-a8df-90d5c0d87fe0}</Project>
       <Name>Telemetry.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telemetry.Implementation\Telemetry.Implementation.csproj">
+      <Project>{8ce30438-ac01-4edc-9f76-1e82a671974b}</Project>
+      <Name>Telemetry.Implementation</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

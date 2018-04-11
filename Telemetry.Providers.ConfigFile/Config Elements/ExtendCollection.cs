@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    public class ExtendCollection : ConfigurationElementCollection
+    public class ExtendCollection : 
+        ConfigurationElementCollection,
+        IEnumerable<ActivationExtend>
     {
         #region CollectionType
 
@@ -60,5 +62,20 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // ElementName
+
+        #region IEnumerable<ActivationConstrict> Members
+
+        IEnumerator<ActivationExtend> IEnumerable<ActivationExtend>.GetEnumerator()
+        {
+            foreach (ExtendConfigElement element in this)
+            {
+                yield return new ActivationExtend(
+                                        element.Importance,
+                                        element.ComponentTag,
+                                        element.Filters);
+            }
+        }
+
+        #endregion // IEnumerable<ActivationConstrict> Members
     }
 }

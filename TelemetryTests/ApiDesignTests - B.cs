@@ -15,8 +15,8 @@ namespace TelemetryTests
     [TestClass]
     public class ApiDesignTestsB
     {
-        private IMetricsReporterFactory _reporterFactory = A.Fake<IMetricsReporterFactory>();
-        private IMetricsReporterAdvanceFactory _reporterAdvanceFactory = A.Fake<IMetricsReporterAdvanceFactory>();
+        private IMetricsReporterBuilder _reporterFactory = A.Fake<IMetricsReporterBuilder>();
+        private IMetricsReporterAdvanceBuilder _reporterAdvanceFactory = A.Fake<IMetricsReporterAdvanceBuilder>();
 
         [TestMethod]
         public void IMetricsReporter_Test()

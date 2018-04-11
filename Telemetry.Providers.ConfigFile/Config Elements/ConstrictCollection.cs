@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    public class ConstrictCollection : ConfigurationElementCollection
+    public class ConstrictCollection : 
+        ConfigurationElementCollection,
+        IEnumerable<ActivationConstrict>
     {
         #region CollectionType
 
@@ -60,5 +62,20 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // ElementName
+
+        #region IEnumerable<ActivationConstrict> Members
+
+        IEnumerator<ActivationConstrict> IEnumerable<ActivationConstrict>.GetEnumerator()
+        {
+            foreach (ConstrictConfigElement element in this)
+            {
+                yield return new ActivationConstrict(
+                                        element.Importance,
+                                        element.ComponentTag,
+                                        element.Filters);
+            }
+        }
+
+        #endregion // IEnumerable<ActivationConstrict> Members
     }
 }

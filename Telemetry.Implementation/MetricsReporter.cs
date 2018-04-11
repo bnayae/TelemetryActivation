@@ -11,53 +11,68 @@ using InfluxDB.Collector;
 
 namespace Telemetry.Implementation
 {
-    public class MetricsReporter :
+    public sealed class MetricsReporter :
         IMetricsReporter,
         IMetricsReporterAdvance
     {
-        private readonly IMetricsConfig _config;
+        private readonly ITelemetryActivation _activation;
         private readonly string _measurementName;
         private readonly IImmutableDictionary<string, string> _tags;
         private readonly MetricsCollector _influxClient;
+        private readonly string _componentTag;
+
+        #region Ctor
 
         public MetricsReporter(
-            IMetricsConfig config,
+            ITelemetryActivation activation,
             string measurementName,
             IImmutableDictionary<string, string> tags,
-            MetricsCollector influxClient)
+            MetricsCollector influxClient,
+            string componentTag)
         {
-            _config = config;
+            _activation = activation;
             _measurementName = measurementName;
             _tags = tags;
             _influxClient = influxClient;
+            _componentTag = componentTag;
         }
 
-        void IMetricsReporter.Count(
+        #endregion // Ctor
+
+        #region Count
+
+        public void Count(
             ImportanceLevel importance,
-            IReadOnlyDictionary<string, string> tags, 
+            IReadOnlyDictionary<string, string> tags,
             [CallerMemberName]
             string operationName = null)
         {
-            tags = _tags.Add("OperationName", operationName)
-                        .AddRange(tags);
-
-            if (_config.IsActive(importance, tags))
+            if (_activation.IsActive(importance, _componentTag))
+            {
+                tags = _tags.Add("OperationName", operationName)
+                            .AddRange(tags);
                 _influxClient.Increment(_measurementName, tags: tags);
+            }
         }
 
-        void IMetricsReporterAdvance.Count(
+        public void Count(
             ImportanceLevel importance,
             IReadOnlyDictionary<string, string> tags,
             int count,
             [CallerMemberName]
             string operationName = null)
         {
-            tags = _tags.Add("OperationName", operationName)
-                        .AddRange(tags);
-
-            if (_config.IsActive(importance, tags))
+            if (_activation.IsActive(importance, _componentTag))
+            {
+                tags = _tags.Add("OperationName", operationName)
+                      .AddRange(tags);
                 _influxClient.Increment(_measurementName, count, tags: tags);
+            }
         }
+
+        #endregion // Count
+
+        #region Duration
 
         public IDisposable Duration(
             ImportanceLevel importance,
@@ -65,28 +80,48 @@ namespace Telemetry.Implementation
             [CallerMemberName]
             string operationName = null)
         {
-            tags = _tags.Add("OperationName", operationName)
-                        .AddRange(tags);
-
             IDisposable result = NonDisposable.Default;
-            if (_config.IsActive(importance, tags))
+            if (_activation.IsActive(importance, _componentTag))
+            {
+                tags = _tags.Add("OperationName", operationName)
+                            .AddRange(tags);
+
                 result = _influxClient.Time(_measurementName, tags: tags);
+            }
             return result;
         }
 
-        void IMetricsReporterAdvance.Report(
+        public void Report(
             IReadOnlyDictionary<string, object> fields,
             IReadOnlyDictionary<string, string> tags,
             ImportanceLevel importance,
             [CallerMemberName]
             string operationName = null)
         {
-            tags = _tags.Add("OperationName", operationName)
-                        .AddRange(tags);
+            if (_activation.IsActive(importance, _componentTag))
+            {
+                tags = _tags.Add("OperationName", operationName)
+                            .AddRange(tags);
 
-            if (_config.IsActive(importance, tags))
                 _influxClient.Write(_measurementName, fields, tags);
+            }
         }
+
+        #endregion // Duration
+
+        #region Dispose Pattern
+
+        public void Dispose()
+        {
+            _influxClient.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        ~MetricsReporter() => Dispose();
+
+        #endregion // Dispose Pattern
+
+        #region NonDisposable [nested]
 
         private class NonDisposable : IDisposable
         {
@@ -95,5 +130,7 @@ namespace Telemetry.Implementation
             {
             }
         }
+
+        #endregion // NonDisposable [nested]
     }
 }

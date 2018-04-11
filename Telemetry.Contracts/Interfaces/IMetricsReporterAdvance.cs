@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Contracts
 {
-    public interface IMetricsReporterAdvance
+    public interface IMetricsReporterAdvance: IDisposable
     {
         void Report(
                     IReadOnlyDictionary<string, object> fields = null,

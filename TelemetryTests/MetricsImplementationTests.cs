@@ -26,11 +26,21 @@ namespace TelemetryTests
                 ["operationGroup"] = "Y"
             };
 
-            var c = new ConfigProvider();
-            IMetricsReporterFactory factory = new MetricsReporterFactory(c);
-            var reporter =
-                factory.ForContext<MetricsImplementationTests>();
-            reporter.Count(ImportanceLevel.High, tags);
+            var activationFactory = new ConfigActivationProvider();
+            var simpleConfig = new SimpleConfig();
+            IMetricsReporterBuilder factory = new MetricsReporterBuilder(
+                activationFactory, 
+                simpleConfig);
+
+            // TODO: don't use cast
+            var activation = (TelemetryActivation)activationFactory.Create();
+            activation.TryAppendToken("controller:ping");
+            activation.TryAppendToken("controller-action:ping");
+            using (var reporter =
+                factory.ForContext<MetricsImplementationTests>())
+            {
+                reporter.Count(ImportanceLevel.High, tags);
+            }
         }
     }
 }
