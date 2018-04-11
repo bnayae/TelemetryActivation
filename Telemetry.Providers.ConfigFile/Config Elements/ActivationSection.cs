@@ -38,19 +38,33 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // MinImportance
 
-        #region Limits
+        #region Constricts
 
-        [ConfigurationProperty("", IsDefaultCollection = true)]
-        public LimitToCollection Limits
+        [ConfigurationProperty("constricts", IsDefaultCollection = false)]
+        public ConstrictCollection Constricts
         {
             get
             {
-                var hostCollection = (LimitToCollection)base[""];
+                var hostCollection = (ConstrictCollection)base["constricts"];
                 return hostCollection;
             }
         }
 
-        #endregion // Limits
+        #endregion // Constricts
+
+        #region Extends
+
+        [ConfigurationProperty("extends", IsDefaultCollection = false)]
+        public ExtendCollection Extends
+        {
+            get
+            {
+                var hostCollection = (ExtendCollection)base["extends"];
+                return hostCollection;
+            }
+        }
+
+        #endregion // Extends
 
         #region DebugView
 
@@ -67,16 +81,32 @@ namespace Telemetry.Providers.ConfigFile
             public ImportanceLevel MinImportance => _instance.MinImportance;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LimitToConfigElement[] Limits
+            public ConstrictConfigElement[] Constricts
             {
                 get
                 {
                     return Get().ToArray();
-                    IEnumerable<LimitToConfigElement> Get()
+                    IEnumerable<ConstrictConfigElement> Get()
                     {
-                        foreach (var exclude in _instance.Limits)
+                        foreach (var exclude in _instance.Constricts)
                         {
-                            yield return (LimitToConfigElement)exclude;
+                            yield return (ConstrictConfigElement)exclude;
+                        }
+                    }
+                }
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public ExtendConfigElement[] Extends
+            {
+                get
+                {
+                    return Get().ToArray();
+                    IEnumerable<ExtendConfigElement> Get()
+                    {
+                        foreach (var extend in _instance.Extends)
+                        {
+                            yield return (ExtendConfigElement)extend;
                         }
                     }
                 }

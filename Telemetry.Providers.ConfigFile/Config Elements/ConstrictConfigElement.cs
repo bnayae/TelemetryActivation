@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 namespace Telemetry.Providers.ConfigFile
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("Limit To: {Importance}")]
-    public class LimitToConfigElement : ConfigurationElement, IEquatable<LimitToConfigElement>
+    [DebuggerDisplay("Constrict: {Importance}")]
+    public class ConstrictConfigElement : ConfigurationElement, IEquatable<ConstrictConfigElement>
     {
         #region Importance
 
@@ -39,6 +39,28 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // Importance
 
+        #region ComponentTag
+
+        [ConfigurationProperty("component-tag",
+            DefaultValue = nameof(ImportanceLevel.Normal),
+            IsRequired = false)]
+        //[RegexStringValidator("(Low|Normal|High)")]
+        //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
+        public string ComponentTag
+        {
+            get
+            {
+                object val = this["component-tag"];
+                return val?.ToString() ?? string.Empty;
+            }
+            set
+            {
+                this["component-tag"] = value;
+            }
+        }
+
+        #endregion // ComponentTag
+
         #region Filters
 
         [ConfigurationProperty("", IsDefaultCollection = true, IsRequired = true)]
@@ -53,9 +75,9 @@ namespace Telemetry.Providers.ConfigFile
 
         internal class DebugView
         {
-            private LimitToConfigElement _instance;
+            private ConstrictConfigElement _instance;
 
-            public DebugView(LimitToConfigElement instance)
+            public DebugView(ConstrictConfigElement instance)
             {
                 this._instance = instance;
             }
@@ -85,16 +107,16 @@ namespace Telemetry.Providers.ConfigFile
 
         #region Equality Pattern
 
-
         public override bool Equals(object obj)
         {
-            return Equals(obj as LimitToConfigElement);
+            return Equals(obj as ConstrictConfigElement);
         }
 
-        public bool Equals(LimitToConfigElement other)
+        public bool Equals(ConstrictConfigElement other)
         {
             return other != null &&
                    Importance == other.Importance &&
+                   ComponentTag == other.ComponentTag &&
                    EqualityComparer<FilterCollection>.Default.Equals(Filters, other.Filters);
         }
 
@@ -102,6 +124,7 @@ namespace Telemetry.Providers.ConfigFile
         {
             var hashCode = -1095595053;
             hashCode = hashCode * -1521134295 + Importance.GetHashCode();
+            hashCode = hashCode * -1521134295 + ComponentTag.GetHashCode();
             foreach (var filter in Filters)
             {
                 hashCode = hashCode * -1521134295 + filter.GetHashCode();
@@ -110,12 +133,12 @@ namespace Telemetry.Providers.ConfigFile
             return hashCode;
         }
 
-        public static bool operator ==(LimitToConfigElement element1, LimitToConfigElement element2)
+        public static bool operator ==(ConstrictConfigElement element1, ConstrictConfigElement element2)
         {
-            return EqualityComparer<LimitToConfigElement>.Default.Equals(element1, element2);
+            return EqualityComparer<ConstrictConfigElement>.Default.Equals(element1, element2);
         }
 
-        public static bool operator !=(LimitToConfigElement element1, LimitToConfigElement element2)
+        public static bool operator !=(ConstrictConfigElement element1, ConstrictConfigElement element2)
         {
             return !(element1 == element2);
         }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    public class LimitToCollection : ConfigurationElementCollection
+    public class ConstrictCollection : ConfigurationElementCollection
     {
         #region CollectionType
 
@@ -29,7 +29,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new LimitToConfigElement();
+            return new ConstrictConfigElement();
         }
 
         #endregion // CreateNewElement
@@ -38,7 +38,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override Object GetElementKey(ConfigurationElement element)
         {
-            return ((LimitToConfigElement)element).GetHashCode();
+            return ((ConstrictConfigElement)element).GetHashCode();
         }
 
         #endregion // GetElementKey
@@ -56,7 +56,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override string ElementName
         {
-            get { return "limit-to"; }
+            get { return "constrict"; }
         }
 
         #endregion // ElementName
