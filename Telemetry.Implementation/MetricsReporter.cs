@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Contracts;
-using Contracts;
 using InfluxDB.Collector;
 
 namespace Telemetry.Implementation
@@ -16,56 +15,64 @@ namespace Telemetry.Implementation
         IMetricsReporterAdvance
     {
         private readonly ITelemetryActivation _activation;
+        private readonly ITelemetryTagContext _tagContext;
         private readonly string _measurementName;
         private readonly IImmutableDictionary<string, string> _tags;
         private readonly MetricsCollector _influxClient;
-        private readonly string _componentTag;
 
         #region Ctor
 
         public MetricsReporter(
             ITelemetryActivation activation,
+            ITelemetryTagContext tagContext,
             string measurementName,
             IImmutableDictionary<string, string> tags,
-            MetricsCollector influxClient,
-            string componentTag)
+            MetricsCollector influxClient)
         {
             _activation = activation;
+            _tagContext = tagContext;
             _measurementName = measurementName;
             _tags = tags;
             _influxClient = influxClient;
-            _componentTag = componentTag;
         }
 
         #endregion // Ctor
 
         #region Count
 
+        #region Overloads
+
+        /// <summary>
+        /// Report quantity at point in time.
+        /// Classic usage is for reporting operation starts
+        /// from this kind of report you can understand the throughput over the time-line.
+        /// </summary>
+        /// <param name="importance">The importance.</param>
+        /// <param name="tags">The tags.</param>
         public void Count(
             ImportanceLevel importance,
-            IReadOnlyDictionary<string, string> tags,
-            [CallerMemberName]
-            string operationName = null)
+            IReadOnlyDictionary<string, string> tags)
         {
-            if (_activation.IsActive(importance, _componentTag))
-            {
-                tags = _tags.Add("OperationName", operationName)
-                            .AddRange(tags);
-                _influxClient.Increment(_measurementName, tags: tags);
-            }
+            Count(importance, tags, 1);
         }
 
+        #endregion // Overloads
+
+        /// <summary>
+        /// Counts the specified importance.
+        /// </summary>
+        /// <param name="importance">The importance.</param>
+        /// <param name="tags">The tags.</param>
+        /// <param name="count">The count.</param>
         public void Count(
             ImportanceLevel importance,
             IReadOnlyDictionary<string, string> tags,
-            int count,
-            [CallerMemberName]
-            string operationName = null)
+            int count)
         {
-            if (_activation.IsActive(importance, _componentTag))
+            if (_activation.IsActive(importance))
             {
-                tags = _tags.Add("OperationName", operationName)
-                      .AddRange(tags);
+                tags = _tags.AddRange(tags)
+                            .AddRange(_tagContext.Tags);
                 _influxClient.Increment(_measurementName, count, tags: tags);
             }
         }
@@ -74,34 +81,43 @@ namespace Telemetry.Implementation
 
         #region Duration
 
+        /// <summary>
+        /// Report operation duration.
+        /// </summary>
+        /// <param name="importance">The importance.</param>
+        /// <param name="tags">The tags.</param>
+        /// <returns></returns>
         public IDisposable Duration(
             ImportanceLevel importance,
-            IReadOnlyDictionary<string, string> tags,
-            [CallerMemberName]
-            string operationName = null)
+            IReadOnlyDictionary<string, string> tags)
         {
             IDisposable result = NonDisposable.Default;
-            if (_activation.IsActive(importance, _componentTag))
+            if (_activation.IsActive(importance))
             {
-                tags = _tags.Add("OperationName", operationName)
-                            .AddRange(tags);
+                tags = _tags.AddRange(tags)
+                            .AddRange(_tagContext.Tags);
 
                 result = _influxClient.Time(_measurementName, tags: tags);
             }
             return result;
         }
 
+        /// <summary>
+        /// Reports the specified fields.
+        /// </summary>
+        /// <param name="fields">The fields.</param>
+        /// <param name="tags">The tags.</param>
+        /// <param name="importance">The importance.</param>
         public void Report(
             IReadOnlyDictionary<string, object> fields,
             IReadOnlyDictionary<string, string> tags,
-            ImportanceLevel importance,
-            [CallerMemberName]
-            string operationName = null)
+            ImportanceLevel importance)
         {
-            if (_activation.IsActive(importance, _componentTag))
+            if (_activation.IsActive(importance))
             {
-                tags = _tags.Add("OperationName", operationName)
-                            .AddRange(tags);
+                var contextTags =
+                tags = _tags.AddRange(tags)
+                            .AddRange(_tagContext.Tags);
 
                 _influxClient.Write(_measurementName, fields, tags);
             }

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,55 +16,34 @@ namespace Telemetry.Providers.ConfigFile
 {
     [DebuggerTypeProxy(typeof(DebugView))]
     public class TelemetryActivation :
-        ITelemetryActivation,
-        ITelemetryActivationContext
+        ITelemetryActivation
     {
-        private readonly AsyncLocal<ImmutableHashSet<string>> _context =
-                                        new AsyncLocal<ImmutableHashSet<string>>();
-
         private readonly ActivationSetting _setting;
+        private readonly ITelemetryActivationContext _activationContext;
 
         #region Ctor
 
-        public TelemetryActivation(ActivationSetting setting)
+        public TelemetryActivation(
+            ActivationSetting setting,
+            ITelemetryActivationContext activationContext)
         {
             _setting = setting;
+            _activationContext = activationContext;
         }
 
         #endregion // Ctor
 
-        #region Tokens
-
-        public ImmutableHashSet<string> Tokens => _context.Value;
-
-        #endregion // Tokens
-
-        #region TryAppendToken
-
-        public bool TryAppendToken<T>(T token)
-        {
-            string candidate = token?.ToString();
-            var tokens = Tokens;
-            if (tokens.Contains(candidate))
-                return false;
-
-            _context.Value = tokens.Add(candidate);
-            return true;
-        }
-
-        #endregion // TryAppendToken
-
-        #region HasToken
-
-        public bool HasToken(string token) => Tokens.Contains(token);
-
-        #endregion // HasToken
-
         #region IsActive
 
+        /// <summary>
+        /// Determines whether the specified metric level is active.
+        /// </summary>
+        /// <param name="metricLevel">The metric level.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsActive(
-            ImportanceLevel metricLevel,
-            string ComponentTag = null)
+            ImportanceLevel metricLevel)
         {
             if (metricLevel < _setting.MinImportance)
             {
@@ -75,14 +55,8 @@ namespace Telemetry.Providers.ConfigFile
                     if (settingImportance > metricLevel)
                         continue; // won't activate anyway
 
-                    if (!string.IsNullOrEmpty(extend.ComponentTag) &&
-                        extend.ComponentTag != ComponentTag)
-                    {
-                        continue;
-                    }
-
                     var tokenSupportAllFilters =
-                        extend.Filters.All(m => HasToken(m.Path));
+                        extend.Filters.All(m => _activationContext.HasToken(m.Path));
                     if (tokenSupportAllFilters)
                         return true; // both important and filters match
                 }
@@ -99,14 +73,8 @@ namespace Telemetry.Providers.ConfigFile
                 if (settingImportance < metricLevel)
                     continue; // activate anyway
 
-                if (!string.IsNullOrEmpty(constrict.ComponentTag) &&
-                    constrict.ComponentTag != ComponentTag)
-                {
-                    continue;
-                }
-
                 var tokenSupportAllFilters =
-                    constrict.Filters.All(m => HasToken(m.Path));
+                    constrict.Filters.All(m => _activationContext.HasToken(m.Path));
                 if (tokenSupportAllFilters)
                     return false; // both important and filters match
             }

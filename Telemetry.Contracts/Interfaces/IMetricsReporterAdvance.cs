@@ -9,18 +9,14 @@ namespace Contracts
         void Report(
                     IReadOnlyDictionary<string, object> fields = null,
                     IReadOnlyDictionary<string, string> tags = null,
-                    ImportanceLevel importance = ImportanceLevel.Normal,
-                    [CallerMemberName]
-                    string operationName = null);
+                    ImportanceLevel importance = ImportanceLevel.Normal);
         void Count(
                  ImportanceLevel importance = ImportanceLevel.Normal,
                  IReadOnlyDictionary<string, string> tags = null,
-                 int count = 1,
-                 [CallerMemberName]string operationName = null);
+                 int count = 1);
 
         IDisposable Duration(
                     ImportanceLevel importance = ImportanceLevel.Normal,
-                    IReadOnlyDictionary<string, string> tags = null,
-                    [CallerMemberName]string operationName = null);
+                    IReadOnlyDictionary<string, string> tags = null);
     }
 }

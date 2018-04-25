@@ -16,9 +16,15 @@ namespace TelemetryTests
     [TestClass]
     public class MetricsImplementationTests
     {
-
+        private readonly ITelemetryActivationContext _activationContext = TelemetryActivationContext.Default;
+        private readonly ITelemetryTagContext _tagContext = TelemetryTagContext.Default;
+        private readonly ISimpleConfig _simpleConfig = new SimpleConfig();
+        private readonly ITelemetryPushContext _telemetryPushContext = 
+                        new TelemetryPushContext(
+                                            TelemetryActivationContext.Default, 
+                                            TelemetryTagContext.Default);
         [TestMethod]
-        public void Implement_Via_Config_Test()
+        public void Implement_Via_Config_Expand_Test()
         {
             IReadOnlyDictionary<string, string> tags = new Dictionary<string, string>
             {
@@ -26,18 +32,43 @@ namespace TelemetryTests
                 ["operationGroup"] = "Y"
             };
 
-            var activationFactory = new ConfigActivationProvider();
-            var simpleConfig = new SimpleConfig();
-            IMetricsReporterBuilder factory = new MetricsReporterBuilder(
+            var activationFactory = new ConfigActivationProvider(_activationContext);
+            IMetricsReporterBuilder builder = new MetricsReporterBuilder(
                 activationFactory, 
-                simpleConfig);
+                _simpleConfig,
+                _tagContext);
 
-            // TODO: don't use cast
-            var activation = (TelemetryActivation)activationFactory.Create();
-            activation.TryAppendToken("controller:ping");
-            activation.TryAppendToken("controller-action:ping");
-            using (var reporter =
-                factory.ForContext<MetricsImplementationTests>())
+            _activationContext.PushFlow(CommonLayerOrService.WebApi, "Test-class", "test-method-a");
+            _activationContext.PushToken("env", "qa");
+            _tagContext.PushFlow(CommonLayerOrService.WebApi, "Test-class", "test-method-a");
+            _tagContext.PushToken("env", "qa");
+            _telemetryPushContext.PushToken("dry", "pushed-to-all");
+            using (var reporter = builder.Build())
+            {
+                reporter.Count(ImportanceLevel.Low, tags);
+            }
+        }
+        [TestMethod]
+        public void Implement_Via_Config_Constrict_Test()
+        {
+            IReadOnlyDictionary<string, string> tags = new Dictionary<string, string>
+            {
+                ["operationName"] = "X",
+                ["operationGroup"] = "Y"
+            };
+
+            var activationFactory = new ConfigActivationProvider(_activationContext);
+            IMetricsReporterBuilder builder = new MetricsReporterBuilder(
+                activationFactory, 
+                _simpleConfig,
+                _tagContext);
+
+            _activationContext.PushFlow(CommonLayerOrService.WebApi, "Test-class", "test-method");
+            _activationContext.PushToken("env", "qa");
+            _tagContext.PushFlow(CommonLayerOrService.WebApi, "Test-class", "test-method-b");
+            _tagContext.PushToken("env", "qa");
+            _telemetryPushContext.PushToken("dry", "pushed-to-all");
+            using (var reporter = builder.Build())
             {
                 reporter.Count(ImportanceLevel.High, tags);
             }

@@ -9,41 +9,27 @@ using System.Threading.Tasks;
 
 namespace Telemetry.Providers.ConfigFile
 {
-    [DebuggerTypeProxy(typeof(DebugView))]
     public class ConfigActivationProvider : ITelemetryActivationFactory
     {
         private readonly TelemetryActivation _activation;
-        private readonly ActivationSetting _setting; // keep for the debugger
-        public ConfigActivationProvider()
+
+        #region Ctor
+
+        public ConfigActivationProvider(
+            ITelemetryActivationContext activationContext)
         {
             var config =
                 ConfigurationManager.GetSection("activationSection") as ActivationSection;
-            _setting =
+            var setting =
                 new ActivationSetting(
                             config.MinImportance,
                             config.Constricts,
                             config.Extends);
-            _activation = new TelemetryActivation(_setting);
+            _activation = new TelemetryActivation(setting, activationContext);
         }
+
+        #endregion // Ctor
 
         public ITelemetryActivation Create() => _activation;
-
-        #region DebugView
-
-        internal class DebugView
-        {
-            private ConfigActivationProvider _instance;
-
-            public DebugView(ConfigActivationProvider instance)
-            {
-                this._instance = instance;
-            }
-
-
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ActivationSetting ConfigSection => _instance._setting;
-        }
-
-        #endregion // DebugView
     }
 }

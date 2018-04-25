@@ -64,8 +64,8 @@ namespace Contracts
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationExtend[] Extends => _instance.Extends.ToArray();
-
-            #endregion // DebugView
         }
+
+        #endregion // DebugView
     }
 }

@@ -62,9 +62,8 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiDesignTests - B.cs" />
-    <Compile Include="MetricsImplementationTests.cs" />
     <Compile Include="ApiDesignTests.cs" />
+    <Compile Include="MetricsImplementationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

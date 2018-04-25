@@ -23,7 +23,6 @@ namespace Contracts
             IEnumerable<ActivationFilter> filters)
         {
             Importance = importance;
-            ComponentTag = componentTag;
             Filters = filters?.ToArray() ?? Array.Empty<ActivationFilter>();
         }
 
@@ -34,12 +33,6 @@ namespace Contracts
         public ImportanceLevel Importance { get; }
 
         #endregion // Importance
-
-        #region ComponentTag
-
-        public string ComponentTag { get; }
-
-        #endregion // ComponentTag
 
         #region Filters
 
@@ -79,7 +72,6 @@ namespace Contracts
         {
             return other != null &&
                    Importance == other.Importance &&
-                   ComponentTag == other.ComponentTag &&
                    EqualityComparer<ActivationFilter[]>.Default.Equals(Filters, other.Filters);
         }
 
@@ -87,7 +79,6 @@ namespace Contracts
         {
             var hashCode = -1095595053;
             hashCode = hashCode * -1521134295 + Importance.GetHashCode();
-            hashCode = hashCode * -1521134295 + ComponentTag.GetHashCode();
             foreach (var filter in Filters)
             {
                 hashCode = hashCode * -1521134295 + filter.GetHashCode();

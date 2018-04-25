@@ -6,9 +6,17 @@ namespace Contracts
 {
     public interface IMetricsReporterAdvanceBuilder 
     {
-        IMetricsReporterAdvanceBuilder AddTag<T>(string tagName, T tagValue);
-        IMetricsReporterAdvance ForContext<T>();
-        IMetricsReporterAdvance ForContext(string componentTag);
-        IMetricsReporterAdvanceBuilder Measurement(string measurementName);
+        /// <summary>
+        /// Override the current or default measurement name.
+        /// </summary>
+        /// <param name="measurementName">Name of the measurement.</param>
+        /// <returns></returns>
+        IMetricsReporterBuilder Measurement(string measurementName);
+
+        /// <summary>
+        /// Create the actual reporter (according to the builder state).
+        /// </summary>
+        /// <returns></returns>
+        IMetricsReporterAdvance Build();
     }
 }

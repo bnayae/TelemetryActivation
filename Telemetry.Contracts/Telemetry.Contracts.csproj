@@ -43,13 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\Activation\ActivationSetting.cs" />
-    <Compile Include="Interfaces\Activation\ActivationConstrict.cs" />
-    <Compile Include="Interfaces\Activation\ExtendConfigElement.cs" />
-    <Compile Include="Interfaces\Activation\ActivationFilter.cs" />
+    <Compile Include="DTOs\Activation\ActivationSetting.cs" />
+    <Compile Include="DTOs\Activation\ActivationConstrict.cs" />
+    <Compile Include="DTOs\Activation\ExtendConfigElement.cs" />
+    <Compile Include="DTOs\Activation\ActivationFilter.cs" />
+    <Compile Include="Enums\CommonLayerOrService.cs" />
     <Compile Include="Interfaces\ISimpleConfig.cs" />
     <Compile Include="Interfaces\IMetricsReporterContext.cs" />
-    <Compile Include="ImportanceLevel.cs" />
+    <Compile Include="Enums\ImportanceLevel.cs" />
+    <Compile Include="Interfaces\ITelemetryPushContext.cs" />
+    <Compile Include="Interfaces\ITelemetryTagContext.cs" />
     <Compile Include="Interfaces\ITelemetryActivationFactory.cs" />
     <Compile Include="Interfaces\ITelemetryActivationContext.cs" />
     <Compile Include="Interfaces\ITelemetryActivation.cs" />
