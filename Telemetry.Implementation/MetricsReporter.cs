@@ -71,7 +71,7 @@ namespace Telemetry.Implementation
         {
             if (_activation.IsActive(importance))
             {
-                tags = _tags.AddRange(tags)
+                tags = _tags.AddRange(tags ?? ImmutableDictionary<string, string>.Empty)
                             .AddRange(_tagContext.Tags);
                 _influxClient.Increment(_measurementName, count, tags: tags);
             }

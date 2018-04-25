@@ -23,6 +23,9 @@ namespace TelemetryTests
                         new TelemetryPushContext(
                                             TelemetryActivationContext.Default, 
                                             TelemetryTagContext.Default);
+        private readonly ITelemetryActivationFactory _activationFactory = 
+                                new ConfigActivationProvider(TelemetryActivationContext.Default);
+
         [TestMethod]
         public void Implement_Via_Config_Expand_Test()
         {
@@ -32,9 +35,8 @@ namespace TelemetryTests
                 ["operationGroup"] = "Y"
             };
 
-            var activationFactory = new ConfigActivationProvider(_activationContext);
             IMetricsReporterBuilder builder = new MetricsReporterBuilder(
-                activationFactory, 
+                _activationFactory, 
                 _simpleConfig,
                 _tagContext);
 
@@ -48,6 +50,7 @@ namespace TelemetryTests
                 reporter.Count(ImportanceLevel.Low, tags);
             }
         }
+
         [TestMethod]
         public void Implement_Via_Config_Constrict_Test()
         {
@@ -57,9 +60,8 @@ namespace TelemetryTests
                 ["operationGroup"] = "Y"
             };
 
-            var activationFactory = new ConfigActivationProvider(_activationContext);
             IMetricsReporterBuilder builder = new MetricsReporterBuilder(
-                activationFactory, 
+                _activationFactory, 
                 _simpleConfig,
                 _tagContext);
 
