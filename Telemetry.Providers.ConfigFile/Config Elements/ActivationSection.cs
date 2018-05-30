@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,29 +15,56 @@ namespace Telemetry.Providers.ConfigFile
     [DebuggerTypeProxy(typeof(DebugView))]
     public class ActivationSection : ConfigurationSection
     {
-        #region MinImportance
+        private const string METRIC_THRESHOLD = "metric-threshold";
+        private const string TEXTUAL_THRESHOLD = "textual-threshold";
 
-        [ConfigurationProperty("min-importance",
+        #region MetricThreshold
+
+        [ConfigurationProperty(METRIC_THRESHOLD,
             DefaultValue = nameof(ImportanceLevel.Normal),
             IsRequired = false)]
         //[RegexStringValidator("(Low|Normal|High)")]
         //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public ImportanceLevel MinImportance
+        public ImportanceLevel MetricThreshold
         {
             get
             {
-                object val = this["min-importance"];
+                object val = this[METRIC_THRESHOLD];
                 if (val == null)
                     return 0;
                 return (ImportanceLevel)val;
             }
             set
             {
-                this["min-importance"] = value;
+                this[METRIC_THRESHOLD] = value;
             }
         }
 
-        #endregion // MinImportance
+        #endregion // MetricThreshold
+
+        #region TextualThreshold
+
+        [ConfigurationProperty(TEXTUAL_THRESHOLD,
+            DefaultValue = nameof(LogEventLevel.Information),
+            IsRequired = false)]
+        //[RegexStringValidator("(Verbose|Debug|Information|Warning|Error|Fatal)")]
+        //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
+        public LogEventLevel TextualThreshold
+        {
+            get
+            {
+                object val = this[TEXTUAL_THRESHOLD];
+                if (val == null)
+                    return 0;
+                return (LogEventLevel)val;
+            }
+            set
+            {
+                this[TEXTUAL_THRESHOLD] = value;
+            }
+        }
+
+        #endregion // TextualThreshold
 
         #region Constricts
 
@@ -78,35 +106,36 @@ namespace Telemetry.Providers.ConfigFile
             }
 
 
-            public ImportanceLevel MinImportance => _instance.MinImportance;
+            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ConstrictConfigElement[] Constricts
+            public ConfigItemElement[] Constricts
             {
                 get
                 {
                     return Get().ToArray();
-                    IEnumerable<ConstrictConfigElement> Get()
+                    IEnumerable<ConfigItemElement> Get()
                     {
                         foreach (var exclude in _instance.Constricts)
                         {
-                            yield return (ConstrictConfigElement)exclude;
+                            yield return (ConfigItemElement)exclude;
                         }
                     }
                 }
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ExtendConfigElement[] Extends
+            public ConfigItemElement[] Extends
             {
                 get
                 {
                     return Get().ToArray();
-                    IEnumerable<ExtendConfigElement> Get()
+                    IEnumerable<ConfigItemElement> Get()
                     {
                         foreach (var extend in _instance.Extends)
                         {
-                            yield return (ExtendConfigElement)extend;
+                            yield return (ConfigItemElement)extend;
                         }
                     }
                 }

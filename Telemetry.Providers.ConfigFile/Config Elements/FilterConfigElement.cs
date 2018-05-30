@@ -40,9 +40,9 @@ namespace Telemetry.Providers.ConfigFile
 
         #region Equality Pattern
 
-        public override bool Equals(object obj)
+        public override bool Equals(object compareTo)
         {
-            return Equals(obj as FilterConfigElement);
+            return Equals(compareTo as FilterConfigElement);
         }
 
         public bool Equals(FilterConfigElement other)

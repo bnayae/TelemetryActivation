@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.7.1\lib\net46\Serilog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
@@ -44,11 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config Elements\ConfigItemElement.cs" />
     <Compile Include="Config Elements\ExtendCollection.cs" />
     <Compile Include="Config Elements\ConstrictCollection.cs" />
     <Compile Include="Config Elements\ActivationSection.cs" />
-    <Compile Include="Config Elements\ExtendConfigElement.cs" />
-    <Compile Include="Config Elements\ConstrictConfigElement.cs" />
     <Compile Include="Config Elements\FilterConfigElement.cs" />
     <Compile Include="ConfigActivationProvider.cs" />
     <Compile Include="Config Elements\FilterCollection.cs" />

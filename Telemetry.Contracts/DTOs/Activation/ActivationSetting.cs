@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,31 +18,39 @@ namespace Contracts
         #region Ctor
 
         public ActivationSetting(
-            ImportanceLevel minImportance,
-            IEnumerable<ActivationConstrict> constricts,
-            IEnumerable<ActivationExtend> extends)
+            ImportanceLevel metricThreshold,
+            LogEventLevel textualThreshold,
+            IEnumerable<ActivationItem> constricts,
+            IEnumerable<ActivationItem> extends)
         {
-            MinImportance = minImportance;
-            Constricts = constricts?.ToArray() ?? Array.Empty<ActivationConstrict>();
-            Extends = extends?.ToArray() ?? Array.Empty<ActivationExtend>();
+            MetricThreshold = metricThreshold;
+            TextualThreshold = textualThreshold;
+            Constricts = constricts?.ToArray() ?? Array.Empty<ActivationItem>();
+            Extends = extends?.ToArray() ?? Array.Empty<ActivationItem>();
         }
 
         #endregion // Ctor
 
-        #region MinImportance
+        #region MetricThreshold
 
-        public ImportanceLevel MinImportance { get; }
+        public ImportanceLevel MetricThreshold { get; }
 
-        #endregion // MinImportance
+        #endregion // MetricThreshold
+
+        #region TextualThreshold
+
+        public LogEventLevel TextualThreshold { get; }
+
+        #endregion // TextualThreshold
 
         #region Constricts
 
-        public ActivationConstrict[] Constricts { get; }
+        public ActivationItem[] Constricts { get; }
 
         #endregion // Constricts
 
         #region Extends
-        public ActivationExtend[] Extends { get; }
+        public ActivationItem[] Extends { get; }
 
         #endregion // Extends
 
@@ -57,13 +66,17 @@ namespace Contracts
             }
 
 
-            public ImportanceLevel MinImportance => _instance.MinImportance;
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ActivationConstrict[] Constricts => _instance.Constricts.ToArray();
+            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ActivationExtend[] Extends => _instance.Extends.ToArray();
+            public ActivationItem[] Constricts => _instance.Constricts.ToArray();
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public ActivationItem[] Extends => _instance.Extends.ToArray();
         }
 
         #endregion // DebugView

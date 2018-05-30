@@ -1,4 +1,6 @@
 ﻿using Contracts;
+using Serilog;
+using Serilog.Sinks.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,8 @@ namespace WebToInflux
         //private static ObjectCache _cache = MemoryCache.Default;
         private const string COMPONENT_NAME = "webapi";
         private static IMetricsReporter _reporter;
+        private static LogFactory _logFactory;
+
 
         public TelemetryReporterInfluxAttribute()
         {
@@ -34,6 +38,13 @@ namespace WebToInflux
                  _simpleConfig,
                  _tagContext);
             _reporter = builder.Build();
+
+            var logConfig = new LoggerConfiguration();
+            logConfig = logConfig
+                            .WriteTo.File("log.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                            .WriteTo.Seq("http://localhost:5341");
+            var activation = _activationFactory.Create();
+            _logFactory = new LogFactory(logConfig, activation);
         }
 
         public override void OnActionExecuting(
@@ -48,11 +59,16 @@ namespace WebToInflux
             _tagContext.PushToken("method", request.Method.Method);
             _tagContext.PushToken("uri", request.Method.Method);
             _telemetryPushContext.PushToken("request-version", request.Method.Method);
-            _activationContext.PushFlow(CommonLayerOrService.WebApi, "Unknown", actionName);
+            var reflected = actionContext?.ActionDescriptor as ReflectedHttpActionDescriptor;
+            var className = reflected?.MethodInfo?.ReflectedType?.Name ?? "Unknown";
+            _activationContext.PushFlow(CommonLayerOrService.WebApi, className, actionName);
 
             _reporter.Count(ImportanceLevel.Normal);
             var operation = _reporter.Duration(ImportanceLevel.Normal);
             actionContext.ActionArguments.Add("end-action", operation);
+            var logger = _logFactory.Create();//.ForContext()
+
+            logger.Information("Test {@url} {@host}", request.Method.Method, Environment.MachineName);
         }
 
         public override void OnActionExecuted(

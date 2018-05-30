@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,34 +13,34 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("Constrict: {Importance}")]
-    public class ActivationConstrict : IEquatable<ActivationConstrict>
+    [DebuggerDisplay("Extend: {MetricThreshold}, {TextualThreshold}")]
+    public class ActivationItem : IEquatable<ActivationItem>
     {
         #region Ctor
 
-        public ActivationConstrict(
-            ImportanceLevel importance,
-            string componentTag,
+        public ActivationItem(
+            ImportanceLevel? metricThreshold,
+            LogEventLevel? textualThreshold,
             IEnumerable<ActivationFilter> filters)
         {
-            Importance = importance;
-            ComponentTag = componentTag;
+            MetricThreshold = metricThreshold;
+            TextualThreshold = textualThreshold;
             Filters = filters?.ToArray() ?? Array.Empty<ActivationFilter>();
         }
 
         #endregion // Ctor
 
-        #region Importance
+        #region MetricThreshold
 
-        public ImportanceLevel Importance { get; }
+        public ImportanceLevel? MetricThreshold { get; }
 
-        #endregion // Importance
+        #endregion // MetricThreshold
 
-        #region ComponentTag
+        #region TextualThreshold
 
-        public string ComponentTag { get; }
+        public LogEventLevel? TextualThreshold { get; }
 
-        #endregion // ComponentTag
+        #endregion // TextualThreshold
 
         #region Filters
 
@@ -51,16 +52,19 @@ namespace Contracts
 
         internal class DebugView
         {
-            private ActivationConstrict _instance;
+            private ActivationItem _instance;
 
-            public DebugView(ActivationConstrict instance)
+            public DebugView(ActivationItem instance)
             {
                 this._instance = instance;
             }
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MinImportance => _instance.Importance;
+            public ImportanceLevel? MetricThreshold => _instance.MetricThreshold;
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public LogEventLevel? TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationFilter[] Filters => _instance.Filters.ToArray();
@@ -72,22 +76,20 @@ namespace Contracts
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as ActivationConstrict);
+            return Equals(obj as ActivationItem);
         }
 
-        public bool Equals(ActivationConstrict other)
+        public bool Equals(ActivationItem other)
         {
             return other != null &&
-                   Importance == other.Importance &&
-                   ComponentTag == other.ComponentTag &&
+                   MetricThreshold == other.MetricThreshold &&
                    EqualityComparer<ActivationFilter[]>.Default.Equals(Filters, other.Filters);
         }
 
         public override int GetHashCode()
         {
             var hashCode = -1095595053;
-            hashCode = hashCode * -1521134295 + Importance.GetHashCode();
-            hashCode = hashCode * -1521134295 + ComponentTag.GetHashCode();
+            hashCode = hashCode * -1521134295 + MetricThreshold.GetHashCode();
             foreach (var filter in Filters)
             {
                 hashCode = hashCode * -1521134295 + filter.GetHashCode();
@@ -96,12 +98,12 @@ namespace Contracts
             return hashCode;
         }
 
-        public static bool operator ==(ActivationConstrict element1, ActivationConstrict element2)
+        public static bool operator ==(ActivationItem element1, ActivationItem element2)
         {
-            return EqualityComparer<ActivationConstrict>.Default.Equals(element1, element2);
+            return EqualityComparer<ActivationItem>.Default.Equals(element1, element2);
         }
 
-        public static bool operator !=(ActivationConstrict element1, ActivationConstrict element2)
+        public static bool operator !=(ActivationItem element1, ActivationItem element2)
         {
             return !(element1 == element2);
         }

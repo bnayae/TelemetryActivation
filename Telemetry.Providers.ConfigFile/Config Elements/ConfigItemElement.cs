@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,54 +13,59 @@ using System.Threading.Tasks;
 namespace Telemetry.Providers.ConfigFile
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("Constrict: {Importance}")]
-    public class ConstrictConfigElement : ConfigurationElement, IEquatable<ConstrictConfigElement>
+    [DebuggerDisplay("Constrict: {MetricThreshold}, {TextualThreshold}")]
+    public class ConfigItemElement : ConfigurationElement, IEquatable<ConfigItemElement>
     {
-        #region Importance
+        private const string METRIC_THRESHOLD = "metric-threshold";
+        private const string TEXTUAL_THRESHOLD = "textual-threshold";
+     
+        #region MetricThreshold
 
-        [ConfigurationProperty("importance",
-            DefaultValue = nameof(ImportanceLevel.Normal),
+        [ConfigurationProperty(METRIC_THRESHOLD,
+            DefaultValue = null,
             IsRequired = false)]
         //[RegexStringValidator("(Low|Normal|High)")]
         //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public ImportanceLevel Importance
+        public ImportanceLevel MetricThreshold
         {
             get
             {
-                object val = this["importance"];
+                object val = this[METRIC_THRESHOLD];
                 if (val == null)
                     return 0;
                 return (ImportanceLevel)val;
             }
             set
             {
-                this["importance"] = value;
+                this[METRIC_THRESHOLD] = value;
             }
         }
 
-        #endregion // Importance
+        #endregion // MetricThreshold
 
-        #region ComponentTag
+        #region TextualThreshold
 
-        [ConfigurationProperty("component-tag",
-            DefaultValue = nameof(ImportanceLevel.Normal),
+        [ConfigurationProperty(TEXTUAL_THRESHOLD,
+            DefaultValue = null,
             IsRequired = false)]
-        //[RegexStringValidator("(Low|Normal|High)")]
+        //[RegexStringValidator("(Verbose|Debug|Information|Warning|Error|Fatal)")]
         //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public string ComponentTag
+        public LogEventLevel TextualThreshold
         {
             get
             {
-                object val = this["component-tag"];
-                return val?.ToString() ?? string.Empty;
+                object val = this[TEXTUAL_THRESHOLD];
+                if (val == null)
+                    return 0;
+                return (LogEventLevel)val;
             }
             set
             {
-                this["component-tag"] = value;
+                this[TEXTUAL_THRESHOLD] = value;
             }
         }
 
-        #endregion // ComponentTag
+        #endregion // TextualThreshold
 
         #region Filters
 
@@ -75,16 +81,19 @@ namespace Telemetry.Providers.ConfigFile
 
         internal class DebugView
         {
-            private ConstrictConfigElement _instance;
+            private ConfigItemElement _instance;
 
-            public DebugView(ConstrictConfigElement instance)
+            public DebugView(ConfigItemElement instance)
             {
                 this._instance = instance;
             }
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MinImportance => _instance.Importance;
+            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public FilterConfigElement[] Filters
@@ -107,24 +116,24 @@ namespace Telemetry.Providers.ConfigFile
 
         #region Equality Pattern
 
-        public override bool Equals(object obj)
+        public override bool Equals(object compareTo)
         {
-            return Equals(obj as ConstrictConfigElement);
+            return Equals(compareTo as ConfigItemElement);
         }
 
-        public bool Equals(ConstrictConfigElement other)
+        public bool Equals(ConfigItemElement other)
         {
             return other != null &&
-                   Importance == other.Importance &&
-                   ComponentTag == other.ComponentTag &&
+                   MetricThreshold == other.MetricThreshold &&
+                   TextualThreshold == other.TextualThreshold &&
                    EqualityComparer<FilterCollection>.Default.Equals(Filters, other.Filters);
         }
 
         public override int GetHashCode()
         {
             var hashCode = -1095595053;
-            hashCode = hashCode * -1521134295 + Importance.GetHashCode();
-            hashCode = hashCode * -1521134295 + ComponentTag.GetHashCode();
+            hashCode = hashCode * -1521134295 + MetricThreshold.GetHashCode();
+            hashCode = hashCode * -1521134295 + TextualThreshold.GetHashCode();
             foreach (var filter in Filters)
             {
                 hashCode = hashCode * -1521134295 + filter.GetHashCode();
@@ -133,12 +142,12 @@ namespace Telemetry.Providers.ConfigFile
             return hashCode;
         }
 
-        public static bool operator ==(ConstrictConfigElement element1, ConstrictConfigElement element2)
+        public static bool operator ==(ConfigItemElement element1, ConfigItemElement element2)
         {
-            return EqualityComparer<ConstrictConfigElement>.Default.Equals(element1, element2);
+            return EqualityComparer<ConfigItemElement>.Default.Equals(element1, element2);
         }
 
-        public static bool operator !=(ConstrictConfigElement element1, ConstrictConfigElement element2)
+        public static bool operator !=(ConfigItemElement element1, ConfigItemElement element2)
         {
             return !(element1 == element2);
         }

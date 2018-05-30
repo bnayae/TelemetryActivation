@@ -13,7 +13,7 @@ namespace Telemetry.Providers.ConfigFile
 {
     public class ExtendCollection : 
         ConfigurationElementCollection,
-        IEnumerable<ActivationExtend>
+        IEnumerable<ActivationItem>
     {
         #region CollectionType
 
@@ -31,7 +31,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new ExtendConfigElement();
+            return new ConfigItemElement();
         }
 
         #endregion // CreateNewElement
@@ -40,7 +40,7 @@ namespace Telemetry.Providers.ConfigFile
 
         protected override Object GetElementKey(ConfigurationElement element)
         {
-            return ((ExtendConfigElement)element).GetHashCode();
+            return ((ConfigItemElement)element).GetHashCode();
         }
 
         #endregion // GetElementKey
@@ -65,13 +65,13 @@ namespace Telemetry.Providers.ConfigFile
 
         #region IEnumerable<ActivationConstrict> Members
 
-        IEnumerator<ActivationExtend> IEnumerable<ActivationExtend>.GetEnumerator()
+        IEnumerator<ActivationItem> IEnumerable<ActivationItem>.GetEnumerator()
         {
-            foreach (ExtendConfigElement element in this)
+            foreach (ConfigItemElement element in this)
             {
-                yield return new ActivationExtend(
-                                        element.Importance,
-                                        element.ComponentTag,
+                yield return new ActivationItem(
+                                        element.MetricThreshold,
+                                        element.TextualThreshold,
                                         element.Filters);
             }
         }

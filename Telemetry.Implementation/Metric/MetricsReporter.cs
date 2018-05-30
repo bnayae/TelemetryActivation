@@ -32,7 +32,7 @@ namespace Telemetry.Implementation
             _activation = activation;
             _tagContext = tagContext;
             _measurementName = measurementName;
-            _tags = tags;
+            _tags = tags ?? ImmutableDictionary<string, string>.Empty;
             _influxClient = influxClient;
         }
 
@@ -72,7 +72,7 @@ namespace Telemetry.Implementation
             if (_activation.IsActive(importance))
             {
                 tags = _tags.AddRange(tags ?? ImmutableDictionary<string, string>.Empty)
-                            .AddRange(_tagContext.Tags);
+                            .AddRange(_tagContext.Tags ?? ImmutableDictionary<string, string>.Empty);
                 _influxClient.Increment(_measurementName, count, tags: tags);
             }
         }
@@ -94,8 +94,8 @@ namespace Telemetry.Implementation
             IDisposable result = NonDisposable.Default;
             if (_activation.IsActive(importance))
             {
-                tags = _tags.AddRange(tags)
-                            .AddRange(_tagContext.Tags);
+                tags = _tags.AddRange(tags ?? ImmutableDictionary<string, string>.Empty)
+                            .AddRange(_tagContext.Tags ?? ImmutableDictionary<string, string>.Empty);
 
                 result = _influxClient.Time(_measurementName, tags: tags);
             }
@@ -116,8 +116,8 @@ namespace Telemetry.Implementation
             if (_activation.IsActive(importance))
             {
                 var contextTags =
-                tags = _tags.AddRange(tags)
-                            .AddRange(_tagContext.Tags);
+                tags = _tags.AddRange(tags ?? ImmutableDictionary<string, string>.Empty)
+                            .AddRange(_tagContext.Tags ?? ImmutableDictionary<string, string>.Empty);
 
                 _influxClient.Write(_measurementName, fields, tags);
             }

@@ -22,7 +22,8 @@ namespace Telemetry.Providers.ConfigFile
                 ConfigurationManager.GetSection("activationSection") as ActivationSection;
             var setting =
                 new ActivationSetting(
-                            config.MinImportance,
+                            config.MetricThreshold,
+                            config.TextualThreshold,
                             config.Constricts,
                             config.Extends);
             _activation = new TelemetryActivation(setting, activationContext);

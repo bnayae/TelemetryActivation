@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -33,6 +34,10 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // Ctor
 
+        public ImportanceLevel MetricThreshold => _setting.MetricThreshold;
+
+        public LogEventLevel TextualThreshold => _setting.TextualThreshold;
+
         #region IsActive
 
         /// <summary>
@@ -45,13 +50,13 @@ namespace Telemetry.Providers.ConfigFile
         public bool IsActive(
             ImportanceLevel metricLevel)
         {
-            if (metricLevel < _setting.MinImportance)
+            if (metricLevel < _setting.MetricThreshold)
             {
                 #region Check if pass the extends
 
                 foreach (var extend in _setting.Extends)
                 {
-                    var settingImportance = extend.Importance;
+                    var settingImportance = extend.MetricThreshold;
                     if (settingImportance > metricLevel)
                         continue; // won't activate anyway
 
@@ -69,8 +74,48 @@ namespace Telemetry.Providers.ConfigFile
 
             foreach (var constrict in _setting.Constricts)
             {
-                var settingImportance = constrict.Importance;
+                var settingImportance = constrict.MetricThreshold;
                 if (settingImportance < metricLevel)
+                    continue; // activate anyway
+
+                var tokenSupportAllFilters =
+                    constrict.Filters.All(m => _activationContext.HasToken(m.Path));
+                if (tokenSupportAllFilters)
+                    return false; // both important and filters match
+            }
+
+            #endregion // Check if constricted
+            return true;
+        }
+
+        public bool IsActive(LogEventLevel level)
+        {
+            if (level < _setting.TextualThreshold)
+            {
+                #region Check if pass the extends
+
+                foreach (var extend in _setting.Extends)
+                {
+                    var settingImportance = extend.TextualThreshold;
+                    if (settingImportance > level)
+                        continue; // won't activate anyway
+
+                    var tokenSupportAllFilters =
+                        extend.Filters.All(m => _activationContext.HasToken(m.Path));
+                    if (tokenSupportAllFilters)
+                        return true; // both important and filters match
+                }
+                return false;
+
+                #endregion // If(Extend) true
+            }
+
+            #region Check if constricted
+
+            foreach (var constrict in _setting.Constricts)
+            {
+                var settingImportance = constrict.TextualThreshold;
+                if (settingImportance < level)
                     continue; // activate anyway
 
                 var tokenSupportAllFilters =

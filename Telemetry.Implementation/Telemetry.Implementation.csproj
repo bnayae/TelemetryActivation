@@ -36,6 +36,9 @@
     <Reference Include="InfluxDB.LineProtocol, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\InfluxDB.LineProtocol.1.1.0\lib\net45\InfluxDB.LineProtocol.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.7.1\lib\net46\Serilog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
@@ -53,11 +56,13 @@
     <Compile Include="SimpleConfig.cs" />
     <Compile Include="TelemetryPushContext.cs" />
     <Compile Include="TelemetryTagContext.cs" />
-    <Compile Include="TelemetryActivationContext.cs" />
-    <Compile Include="TelemetryActivation.cs" />
-    <Compile Include="MetricsReporter.cs" />
-    <Compile Include="MetricsReporterBuilder.cs" />
+    <Compile Include="Activation\TelemetryActivationContext.cs" />
+    <Compile Include="Activation\TelemetryActivation.cs" />
+    <Compile Include="Metric\MetricsReporter.cs" />
+    <Compile Include="Metric\MetricsReporterBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextualLog\Enrichment.cs" />
+    <Compile Include="TextualLog\LogFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Telemetry.Contracts\Telemetry.Contracts.csproj">
