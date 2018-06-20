@@ -115,7 +115,7 @@ namespace Telemetry.Providers.ConfigFile
                 foreach (var extend in setting.Extends)
                 {
                     var settingImportance = extend.TextualThreshold;
-                    if (settingImportance > level)
+                    if (settingImportance >= level)
                         continue; // won't activate anyway
 
                     var tokenSupportAllFilters =
@@ -133,7 +133,7 @@ namespace Telemetry.Providers.ConfigFile
             foreach (var constrict in setting.Constricts)
             {
                 var settingImportance = constrict.TextualThreshold;
-                if (settingImportance < level)
+                if (settingImportance <= level)
                     continue; // activate anyway
 
                 var tokenSupportAllFilters =
