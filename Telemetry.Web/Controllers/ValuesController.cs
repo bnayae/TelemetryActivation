@@ -5,6 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Contracts;
+using Serilog;
+using Telemetry.Implementation;
 using WebToInflux;
 
 namespace WebToInfluxTake2.Controllers
@@ -12,10 +15,21 @@ namespace WebToInfluxTake2.Controllers
     [TelemetryReporterInflux]
     public class ValuesController : ApiController
     {
+        private readonly ILogger _logger;
+        public ValuesController(/*ILogFactory logFactory = null*/)
+        {
+            //logFactory = logFactory ?? LogFactory.Current;
+            //_logger = logFactory.Create<ValuesController>();
+            _logger = LogFactory.Current.Create<ValuesController>();
+
+        }
         // GET api/values
         public async Task<string> Get()
         {
             await Task.Delay(1000).ConfigureAwait(false);
+            _logger.Debug("Debug log");
+            _logger.Information("Info log");
+            _logger.Error("Error log");
             return "ok";
         }
 

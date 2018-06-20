@@ -44,17 +44,22 @@ namespace Telemetry.Providers.ConfigFile
         /// Determines whether the specified metric level is active.
         /// </summary>
         /// <param name="metricLevel">The metric level.</param>
+        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
         /// </returns>
         public bool IsActive(
-            ImportanceLevel metricLevel)
+                ImportanceLevel metricLevel,
+                string channelKey = null)
         {
-            if (metricLevel < _setting.MetricThreshold)
+            if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
+                return true; // the root level filtering should dictate the result when channel level is empty 
+
+            if (metricLevel < setting.MetricThreshold)
             {
                 #region Check if pass the extends
 
-                foreach (var extend in _setting.Extends)
+                foreach (var extend in setting.Extends)
                 {
                     var settingImportance = extend.MetricThreshold;
                     if (settingImportance > metricLevel)
@@ -72,7 +77,7 @@ namespace Telemetry.Providers.ConfigFile
 
             #region Check if constricted
 
-            foreach (var constrict in _setting.Constricts)
+            foreach (var constrict in setting.Constricts)
             {
                 var settingImportance = constrict.MetricThreshold;
                 if (settingImportance < metricLevel)
@@ -88,13 +93,26 @@ namespace Telemetry.Providers.ConfigFile
             return true;
         }
 
-        public bool IsActive(LogEventLevel level)
+        /// <summary>
+        /// Determines whether the specified log level is active.
+        /// </summary>
+        /// <param name="level">The log level.</param>
+        /// <param name="channelKey">The channel key.</param>
+        /// <returns>
+        /// <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsActive(
+                LogEventLevel level,
+                string channelKey = null)
         {
-            if (level < _setting.TextualThreshold)
+            if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
+                return true; // the root level filtering should dictate the result when channel level is empty 
+
+            if (level < setting.TextualThreshold)
             {
                 #region Check if pass the extends
 
-                foreach (var extend in _setting.Extends)
+                foreach (var extend in setting.Extends)
                 {
                     var settingImportance = extend.TextualThreshold;
                     if (settingImportance > level)
@@ -112,7 +130,7 @@ namespace Telemetry.Providers.ConfigFile
 
             #region Check if constricted
 
-            foreach (var constrict in _setting.Constricts)
+            foreach (var constrict in setting.Constricts)
             {
                 var settingImportance = constrict.TextualThreshold;
                 if (settingImportance < level)
@@ -129,6 +147,31 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // IsActive
+
+        #region TryGetSettingUnit
+
+        /// <summary>
+        /// Gets the setting unit (root or channel level).
+        /// </summary>
+        /// <param name="channelKey">The channel key.</param>
+        /// <param name="setting">The setting.</param>
+        /// <returns>false when channel key != null and missing from configuration</returns>
+        private bool TryGetSettingUnit(
+                string channelKey,
+                out ActivationUnit setting)
+        {
+            setting = null;
+            if (string.IsNullOrEmpty(channelKey))
+                setting = _setting; // root level
+            else // channel level
+            {
+                if (_setting.Channels.TryGetValue(channelKey, out ActivationUnit unit))
+                    setting = unit;
+            }
+            return setting != null;
+        }
+
+        #endregion // TryGetSettingUnit
 
         #region DebugView
 

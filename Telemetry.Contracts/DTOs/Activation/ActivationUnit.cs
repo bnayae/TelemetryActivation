@@ -1,7 +1,6 @@
 ﻿using Contracts;
 using Serilog.Events;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -14,31 +13,46 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    public class ActivationSetting : ActivationUnit
+    public class ActivationUnit
     {
         #region Ctor
 
-        public ActivationSetting(
+        public ActivationUnit(
             ImportanceLevel metricThreshold,
             LogEventLevel textualThreshold,
             IEnumerable<ActivationItem> constricts,
-            IEnumerable<ActivationItem> extends,
-            IEnumerable<KeyValuePair<string, ActivationUnit>> channels)
-            : base(metricThreshold, textualThreshold, constricts, extends)
+            IEnumerable<ActivationItem> extends)
         {
-            Channels = new ConcurrentDictionary<string, ActivationUnit>(channels);
+            MetricThreshold = metricThreshold;
+            TextualThreshold = textualThreshold;
+            Constricts = constricts?.ToArray() ?? Array.Empty<ActivationItem>();
+            Extends = extends?.ToArray() ?? Array.Empty<ActivationItem>();
         }
 
         #endregion // Ctor
 
-        #region Channels
+        #region MetricThreshold
 
-        /// <summary>
-        /// Gets the channels.
-        /// </summary>
-        public ConcurrentDictionary<string, ActivationUnit> Channels { get; }
+        public ImportanceLevel MetricThreshold { get; }
 
-        #endregion // Channels
+        #endregion // MetricThreshold
+
+        #region TextualThreshold
+
+        public LogEventLevel TextualThreshold { get; }
+
+        #endregion // TextualThreshold
+
+        #region Constricts
+
+        public ActivationItem[] Constricts { get; }
+
+        #endregion // Constricts
+
+        #region Extends
+        public ActivationItem[] Extends { get; }
+
+        #endregion // Extends
 
         #region DebugView
 
@@ -51,6 +65,7 @@ namespace Contracts
                 this._instance = instance;
             }
 
+
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
 
@@ -62,8 +77,6 @@ namespace Contracts
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Extends => _instance.Extends.ToArray();
-
-            public IDictionary<string, ActivationUnit> Channels => _instance.Channels;
         }
 
         #endregion // DebugView

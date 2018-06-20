@@ -18,20 +18,24 @@ namespace Contracts
         /// Determines whether the specified metric level is active.
         /// </summary>
         /// <param name="metricLevel">The metric level.</param>
+        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
         /// </returns>
         bool IsActive(
-            ImportanceLevel metricLevel);
+            ImportanceLevel metricLevel,
+            string channelKey = null);
 
-         /// <summary>
+        /// <summary>
         /// Determines whether the specified log level is active.
         /// </summary>
         /// <param name="level">The log level.</param>
+        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         ///   <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
         /// </returns>
-       bool IsActive(
-            LogEventLevel level);
+        bool IsActive(
+             LogEventLevel level,
+             string channelKey = null);
     }
 }

@@ -47,13 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config Elements\ConfigItemElement.cs" />
-    <Compile Include="Config Elements\ExtendCollection.cs" />
-    <Compile Include="Config Elements\ConstrictCollection.cs" />
+    <Compile Include="Config Elements\ActivationInfo.cs" />
+    <Compile Include="Config Elements\Channels\ChannelCollection.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ConfigItemElement\ChannelConfigItemElement.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ConfigItemElement\ConfigItemElement.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ExtendCollection.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ConstrictCollection.cs" />
     <Compile Include="Config Elements\ActivationSection.cs" />
-    <Compile Include="Config Elements\FilterConfigElement.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ConfigItemElement\Filter\FilterConfigElement.cs" />
     <Compile Include="ConfigActivationProvider.cs" />
-    <Compile Include="Config Elements\FilterCollection.cs" />
+    <Compile Include="Config Elements\Extend - Constrict\ConfigItemElement\Filter\FilterCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,5 +72,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

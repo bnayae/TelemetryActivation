@@ -1,5 +1,7 @@
 ﻿using Contracts;
 using Serilog;
+using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Sinks.File;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,17 @@ using Telemetry.Providers.ConfigFile;
 
 namespace WebToInflux
 {
+    //public static class Ex
+    //{
+    //    public static LoggerSinkConfiguration WriteTo(
+    //            this LoggerConfiguration loggerConfiguration,
+    //            Action<ILogEventSink> addSink,
+    //            Action<LoggerConfiguration> applyInheritedConfiguration = null)
+    //    {
+    //        loggerConfiguration.ad
+    //    }
+    //}
+
     public class TelemetryReporterInfluxAttribute : ActionFilterAttribute
     {
         private readonly ITelemetryActivationContext _activationContext = TelemetryActivationContext.Default;
@@ -28,7 +41,7 @@ namespace WebToInflux
         //private static ObjectCache _cache = MemoryCache.Default;
         private const string COMPONENT_NAME = "webapi";
         private static IMetricsReporter _reporter;
-        private static LogFactory _logFactory;
+        private static ILogFactory _logFactory;
 
 
         public TelemetryReporterInfluxAttribute()
@@ -39,12 +52,24 @@ namespace WebToInflux
                  _tagContext);
             _reporter = builder.Build();
 
+            var activation = _activationFactory.Create();
             var logConfig = new LoggerConfiguration();
             logConfig = logConfig
-                            .WriteTo.File("log.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                            .WriteTo.Seq("http://localhost:5341");
-            var activation = _activationFactory.Create();
-            _logFactory = new LogFactory(logConfig, activation);
+                            .WriteTo.ActivationSink(
+                                activation, "file",
+                                s => s.File(
+                                    "log.txt",
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
+                            .WriteTo.ActivationSink(
+                                activation, "seq",
+                                s => s.File(
+                                    "log.seq.txt",
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"));
+                            //.WriteTo.ActivationSink(
+                            //    activation, "seq",
+                            //    s => s.Seq("http://localhost:5341"));
+            LogFactory.SetLogFactory(logConfig, activation);
+            _logFactory = LogFactory.Current;
         }
 
         public override void OnActionExecuting(
