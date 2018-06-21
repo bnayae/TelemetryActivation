@@ -13,34 +13,27 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("Extend: {MetricThreshold}, {TextualThreshold}")]
-    public class ActivationItem : IEquatable<ActivationItem>
+    [DebuggerDisplay("{Level.MetricThreshold}, Level.{TextualThreshold}")]
+    public class ActivationItem //: IEquatable<ActivationItem>
     {
         #region Ctor
 
         public ActivationItem(
-            ImportanceLevel? metricThreshold,
-            LogEventLevel? textualThreshold,
+            ImportanceLevel metricThreshold,
+            LogEventLevel textualThreshold,
             IEnumerable<ActivationFilter> filters)
         {
-            MetricThreshold = metricThreshold;
-            TextualThreshold = textualThreshold;
+            Level = new ActivationLevel(metricThreshold, textualThreshold);
             Filters = filters?.ToArray() ?? Array.Empty<ActivationFilter>();
         }
 
         #endregion // Ctor
 
-        #region MetricThreshold
+        #region Level
 
-        public ImportanceLevel? MetricThreshold { get; }
+        public ActivationLevel Level { get; }
 
-        #endregion // MetricThreshold
-
-        #region TextualThreshold
-
-        public LogEventLevel? TextualThreshold { get; }
-
-        #endregion // TextualThreshold
+        #endregion // Level
 
         #region Filters
 
@@ -61,10 +54,10 @@ namespace Contracts
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel? MetricThreshold => _instance.MetricThreshold;
+            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel? TextualThreshold => _instance.TextualThreshold;
+            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationFilter[] Filters => _instance.Filters.ToArray();
@@ -72,42 +65,42 @@ namespace Contracts
 
         #endregion // DebugView
 
-        #region Equality Pattern
+        //#region Equality Pattern
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ActivationItem);
-        }
+        //public override bool Equals(object obj)
+        //{
+        //    return Equals(obj as ActivationItem);
+        //}
 
-        public bool Equals(ActivationItem other)
-        {
-            return other != null &&
-                   MetricThreshold == other.MetricThreshold &&
-                   EqualityComparer<ActivationFilter[]>.Default.Equals(Filters, other.Filters);
-        }
+        //public bool Equals(ActivationItem other)
+        //{
+        //    return other != null &&
+        //           MetricThreshold == other.MetricThreshold &&
+        //           EqualityComparer<ActivationFilter[]>.Default.Equals(Filters, other.Filters);
+        //}
 
-        public override int GetHashCode()
-        {
-            var hashCode = -1095595053;
-            hashCode = hashCode * -1521134295 + MetricThreshold.GetHashCode();
-            foreach (var filter in Filters)
-            {
-                hashCode = hashCode * -1521134295 + filter.GetHashCode();
-            }
+        //public override int GetHashCode()
+        //{
+        //    var hashCode = -1095595053;
+        //    hashCode = hashCode * -1521134295 + MetricThreshold.GetHashCode();
+        //    foreach (var filter in Filters)
+        //    {
+        //        hashCode = hashCode * -1521134295 + filter.GetHashCode();
+        //    }
 
-            return hashCode;
-        }
+        //    return hashCode;
+        //}
 
-        public static bool operator ==(ActivationItem element1, ActivationItem element2)
-        {
-            return EqualityComparer<ActivationItem>.Default.Equals(element1, element2);
-        }
+        //public static bool operator ==(ActivationItem element1, ActivationItem element2)
+        //{
+        //    return EqualityComparer<ActivationItem>.Default.Equals(element1, element2);
+        //}
 
-        public static bool operator !=(ActivationItem element1, ActivationItem element2)
-        {
-            return !(element1 == element2);
-        }
+        //public static bool operator !=(ActivationItem element1, ActivationItem element2)
+        //{
+        //    return !(element1 == element2);
+        //}
 
-        #endregion // Equality Pattern
+        //#endregion // Equality Pattern
     }
 }

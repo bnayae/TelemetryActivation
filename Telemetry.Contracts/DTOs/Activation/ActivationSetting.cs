@@ -52,10 +52,10 @@ namespace Contracts
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
+            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Constricts => _instance.Constricts.ToArray();

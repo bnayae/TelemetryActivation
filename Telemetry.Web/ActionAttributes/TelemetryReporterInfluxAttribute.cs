@@ -15,27 +15,16 @@ using Telemetry.Providers.ConfigFile;
 
 namespace WebToInflux
 {
-    //public static class Ex
-    //{
-    //    public static LoggerSinkConfiguration WriteTo(
-    //            this LoggerConfiguration loggerConfiguration,
-    //            Action<ILogEventSink> addSink,
-    //            Action<LoggerConfiguration> applyInheritedConfiguration = null)
-    //    {
-    //        loggerConfiguration.ad
-    //    }
-    //}
-
     public class TelemetryReporterInfluxAttribute : ActionFilterAttribute
     {
-        private readonly ITelemetryActivationContext _activationContext = TelemetryActivationContext.Default;
-        private readonly ITelemetryTagContext _tagContext = TelemetryTagContext.Default;
-        private readonly ISimpleConfig _simpleConfig = new SimpleConfig();
-        private readonly ITelemetryPushContext _telemetryPushContext =
+        private static readonly ITelemetryActivationContext _activationContext = TelemetryActivationContext.Default;
+        private static readonly ITelemetryTagContext _tagContext = TelemetryTagContext.Default;
+        private static readonly ISimpleConfig _simpleConfig = new SimpleConfig();
+        private static readonly ITelemetryPushContext _telemetryPushContext =
                         new TelemetryPushContext(
                                             TelemetryActivationContext.Default,
                                             TelemetryTagContext.Default);
-        private readonly ITelemetryActivationFactory _activationFactory =
+        private static readonly ITelemetryActivationFactory _activationFactory =
                                 new ConfigActivationProvider(TelemetryActivationContext.Default);
 
         //private static ObjectCache _cache = MemoryCache.Default;
@@ -44,7 +33,7 @@ namespace WebToInflux
         private static ILogFactory _logFactory;
 
 
-        public TelemetryReporterInfluxAttribute()
+        static TelemetryReporterInfluxAttribute()
         {
             IMetricsReporterBuilder builder = new MetricsReporterBuilder(
                  _activationFactory,
@@ -55,6 +44,7 @@ namespace WebToInflux
             var activation = _activationFactory.Create();
             var logConfig = new LoggerConfiguration();
             logConfig = logConfig
+                            .MinimumLevel.Verbose()
                             .WriteTo.ActivationSink(
                                 activation, "file",
                                 s => s.File(

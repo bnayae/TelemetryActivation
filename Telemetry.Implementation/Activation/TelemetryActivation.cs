@@ -34,63 +34,26 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // Ctor
 
-        public ImportanceLevel MetricThreshold => _setting.MetricThreshold;
+        public ImportanceLevel MetricThreshold => _setting.Level.MetricThreshold;
 
-        public LogEventLevel TextualThreshold => _setting.TextualThreshold;
+        public LogEventLevel TextualThreshold => _setting.Level.TextualThreshold;
 
         #region IsActive
 
         /// <summary>
         /// Determines whether the specified metric level is active.
         /// </summary>
-        /// <param name="metricLevel">The metric level.</param>
+        /// <param name="level">The metric level.</param>
         /// <param name="channelKey">The channel key.</param>
         /// <returns>
         ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
         /// </returns>
         public bool IsActive(
-                ImportanceLevel metricLevel,
+                ImportanceLevel level,
                 string channelKey = null)
         {
-            if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
-                return true; // the root level filtering should dictate the result when channel level is empty 
+            return IsActive((int)level, l => (int)l.MetricThreshold, channelKey);
 
-            if (metricLevel < setting.MetricThreshold)
-            {
-                #region Check if pass the extends
-
-                foreach (var extend in setting.Extends)
-                {
-                    var settingImportance = extend.MetricThreshold;
-                    if (settingImportance > metricLevel)
-                        continue; // won't activate anyway
-
-                    var tokenSupportAllFilters =
-                        extend.Filters.All(m => _activationContext.HasToken(m.Path));
-                    if (tokenSupportAllFilters)
-                        return true; // both important and filters match
-                }
-                return false;
-
-                #endregion // If(Extend) true
-            }
-
-            #region Check if constricted
-
-            foreach (var constrict in setting.Constricts)
-            {
-                var settingImportance = constrict.MetricThreshold;
-                if (settingImportance < metricLevel)
-                    continue; // activate anyway
-
-                var tokenSupportAllFilters =
-                    constrict.Filters.All(m => _activationContext.HasToken(m.Path));
-                if (tokenSupportAllFilters)
-                    return false; // both important and filters match
-            }
-
-            #endregion // Check if constricted
-            return true;
         }
 
         /// <summary>
@@ -105,41 +68,53 @@ namespace Telemetry.Providers.ConfigFile
                 LogEventLevel level,
                 string channelKey = null)
         {
+            return IsActive((int)level, l => (int)l.TextualThreshold, channelKey);
+        }
+
+        /// <summary>
+        /// Determines whether the specified log level is active.
+        /// </summary>
+        /// <param name="level">The log level.</param>
+        /// <param name="channelKey">The channel key.</param>
+        /// <returns>
+        /// <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsActive(
+                int level,
+                Func<ActivationLevel, int> selector,
+                string channelKey = null)
+        {
             if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
                 return true; // the root level filtering should dictate the result when channel level is empty 
 
-            if (level < setting.TextualThreshold)
+            if (level < selector(setting.Level))
             {
+                // Disable unless extends (setting.TextualThreshold)
                 #region Check if pass the extends
 
                 foreach (var extend in setting.Extends)
                 {
-                    var settingImportance = extend.TextualThreshold;
-                    if (settingImportance >= level)
-                        continue; // won't activate anyway
-
+                    var extendLimit = selector(extend.Level);
                     var tokenSupportAllFilters =
                         extend.Filters.All(m => _activationContext.HasToken(m.Path));
-                    if (tokenSupportAllFilters)
-                        return true; // both important and filters match
+                    if (tokenSupportAllFilters && extendLimit < level)
+                        return true;
                 }
                 return false;
 
                 #endregion // If(Extend) true
             }
 
+            // Enable unless constrict (setting.TextualThreshold)
             #region Check if constricted
 
             foreach (var constrict in setting.Constricts)
             {
-                var settingImportance = constrict.TextualThreshold;
-                if (settingImportance <= level)
-                    continue; // activate anyway
-
+                var constrictLimit = selector(constrict.Level);
                 var tokenSupportAllFilters =
                     constrict.Filters.All(m => _activationContext.HasToken(m.Path));
-                if (tokenSupportAllFilters)
-                    return false; // both important and filters match
+                if (tokenSupportAllFilters && constrictLimit > level) 
+                    return false; // disable when (both level and filters match)
             }
 
             #endregion // Check if constricted

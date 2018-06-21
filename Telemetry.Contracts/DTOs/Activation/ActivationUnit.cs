@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
+    [DebuggerDisplay("{Level.MetricThreshold}, Level.{TextualThreshold}")]
     public class ActivationUnit
     {
         #region Ctor
@@ -23,25 +24,18 @@ namespace Contracts
             IEnumerable<ActivationItem> constricts,
             IEnumerable<ActivationItem> extends)
         {
-            MetricThreshold = metricThreshold;
-            TextualThreshold = textualThreshold;
+            Level = new ActivationLevel(metricThreshold, textualThreshold);
             Constricts = constricts?.ToArray() ?? Array.Empty<ActivationItem>();
             Extends = extends?.ToArray() ?? Array.Empty<ActivationItem>();
         }
 
         #endregion // Ctor
 
-        #region MetricThreshold
+        #region Level
 
-        public ImportanceLevel MetricThreshold { get; }
+        public ActivationLevel Level { get; }
 
-        #endregion // MetricThreshold
-
-        #region TextualThreshold
-
-        public LogEventLevel TextualThreshold { get; }
-
-        #endregion // TextualThreshold
+        #endregion // Level
 
         #region Constricts
 
@@ -67,10 +61,10 @@ namespace Contracts
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
+            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Constricts => _instance.Constricts.ToArray();

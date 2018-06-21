@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTOs\Activation\ActivationLevel.cs" />
     <Compile Include="DTOs\Activation\ActivationUnit.cs" />
     <Compile Include="DTOs\Activation\ActivationSetting.cs" />
     <Compile Include="DTOs\Activation\ActivationItem.cs" />
