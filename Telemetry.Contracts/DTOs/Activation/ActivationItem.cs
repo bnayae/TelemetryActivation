@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("{Level.MetricThreshold}, Level.{TextualThreshold}")]
+    [DebuggerDisplay("{Threshold.Metric}, {Threshold.Textual}")]
     public class ActivationItem //: IEquatable<ActivationItem>
     {
         #region Ctor
@@ -23,17 +23,29 @@ namespace Contracts
             LogEventLevel textualThreshold,
             IEnumerable<ActivationFilter> filters)
         {
-            Level = new ActivationLevel(metricThreshold, textualThreshold);
+            Threshold = new ActivationThreshold(metricThreshold, textualThreshold);
             Filters = filters?.ToArray() ?? Array.Empty<ActivationFilter>();
         }
 
         #endregion // Ctor
 
-        #region Level
+        #region Threshold
 
-        public ActivationLevel Level { get; }
+        public ActivationThreshold Threshold { get; }
 
-        #endregion // Level
+        #endregion // Threshold
+
+        public int GetThreshold(TelemetryActivationKind kind)
+        {
+            switch (kind)
+            {
+                case TelemetryActivationKind.Metric:
+                    return (int)Threshold.Metric;
+                case TelemetryActivationKind.Textual:
+                    return (int)Threshold.Textual;
+            }
+            throw new ArgumentOutOfRangeException($"Invalid kind {kind}");
+        }
 
         #region Filters
 
@@ -54,10 +66,10 @@ namespace Contracts
 
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
+            public ImportanceLevel MetricThreshold => _instance.Threshold.Metric;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
+            public LogEventLevel TextualThreshold => _instance.Threshold.Textual;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationFilter[] Filters => _instance.Filters.ToArray();

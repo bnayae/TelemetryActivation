@@ -13,29 +13,29 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
-    [DebuggerDisplay("{Level.MetricThreshold}, Level.{TextualThreshold}")]
+    //[DebuggerDisplay("{Threshold.Metric}, {Threshold.Textual}")]
     public class ActivationUnit
     {
         #region Ctor
 
         public ActivationUnit(
-            ImportanceLevel metricThreshold,
-            LogEventLevel textualThreshold,
+            //ImportanceLevel metricThreshold,
+            //LogEventLevel textualThreshold,
             IEnumerable<ActivationItem> constricts,
             IEnumerable<ActivationItem> extends)
         {
-            Level = new ActivationLevel(metricThreshold, textualThreshold);
+            //Threshold = new ActivationThreshold(metricThreshold, textualThreshold);
             Constricts = constricts?.ToArray() ?? Array.Empty<ActivationItem>();
             Extends = extends?.ToArray() ?? Array.Empty<ActivationItem>();
         }
 
         #endregion // Ctor
 
-        #region Level
+        //#region Threshold
 
-        public ActivationLevel Level { get; }
+        //public ActivationThreshold Threshold { get; }
 
-        #endregion // Level
+        //#endregion // Threshold
 
         #region Constricts
 
@@ -60,11 +60,11 @@ namespace Contracts
             }
 
 
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
+            //[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            //public ImportanceLevel MetricThreshold => _instance.Threshold.Metric;
 
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
+            //[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            //public LogEventLevel TextualThreshold => _instance.Threshold.Textual;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Constricts => _instance.Constricts.ToArray();

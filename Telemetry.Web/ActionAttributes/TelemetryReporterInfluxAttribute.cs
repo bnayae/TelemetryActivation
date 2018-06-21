@@ -45,19 +45,28 @@ namespace WebToInflux
             var logConfig = new LoggerConfiguration();
             logConfig = logConfig
                             .MinimumLevel.Verbose()
-                            .WriteTo.ActivationSink(
-                                activation, "file",
+                            .WriteTo.WithActivation(
+                                activation, "ignore",
                                 s => s.File(
                                     "log.txt",
+                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
                                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
-                            .WriteTo.ActivationSink(
-                                activation, "seq",
+                            .WriteTo.WithActivation(
+                                activation, "error",
                                 s => s.File(
-                                    "log.seq.txt",
-                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"));
-                            //.WriteTo.ActivationSink(
+                                    "log.error.txt",
+                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
+                            .WriteTo.WithActivation(
+                                activation, "warn",
+                                s => s.File(
+                                    "log.warn.txt",
+                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
+                            ;
+                            //.WriteTo.WithActivation(
                             //    activation, "seq",
-                            //    s => s.Seq("http://localhost:5341"));
+                            //    s => s.Seq("http://localhost:5341",restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug));
             LogFactory.SetLogFactory(logConfig, activation);
             _logFactory = LogFactory.Current;
         }

@@ -34,9 +34,9 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // Ctor
 
-        public ImportanceLevel MetricThreshold => _setting.Level.MetricThreshold;
+        public ImportanceLevel MetricThreshold => _setting.Threshold.Metric;
 
-        public LogEventLevel TextualThreshold => _setting.Level.TextualThreshold;
+        public LogEventLevel TextualThreshold => _setting.Threshold.Textual;
 
         #region IsActive
 
@@ -52,7 +52,7 @@ namespace Telemetry.Providers.ConfigFile
                 ImportanceLevel level,
                 string channelKey = null)
         {
-            return IsActive((int)level, l => (int)l.MetricThreshold, channelKey);
+            return IsActive((int)level, TelemetryActivationKind.Metric, channelKey);
 
         }
 
@@ -68,7 +68,7 @@ namespace Telemetry.Providers.ConfigFile
                 LogEventLevel level,
                 string channelKey = null)
         {
-            return IsActive((int)level, l => (int)l.TextualThreshold, channelKey);
+            return IsActive((int)level, TelemetryActivationKind.Textual, channelKey);
         }
 
         /// <summary>
@@ -81,20 +81,37 @@ namespace Telemetry.Providers.ConfigFile
         /// </returns>
         private bool IsActive(
                 int level,
-                Func<ActivationLevel, int> selector,
+                TelemetryActivationKind kind,
                 string channelKey = null)
         {
+            #region int minLevel = ...
+
+            int minLevel;
+            switch (kind)
+            {
+                case TelemetryActivationKind.Metric:
+                    minLevel = (int)_setting.Threshold.Metric;
+                    break;
+                case TelemetryActivationKind.Textual:
+                    minLevel = (int)_setting.Threshold.Textual;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException($"invalid kind {kind}");
+            }
+
+            #endregion // int minLevel = ...
+
             if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
                 return true; // the root level filtering should dictate the result when channel level is empty 
 
-            if (level < selector(setting.Level))
+            if (level < minLevel)
             {
                 // Disable unless extends (setting.TextualThreshold)
                 #region Check if pass the extends
 
                 foreach (var extend in setting.Extends)
                 {
-                    var extendLimit = selector(extend.Level);
+                    var extendLimit = extend.GetThreshold(kind);
                     var tokenSupportAllFilters =
                         extend.Filters.All(m => _activationContext.HasToken(m.Path));
                     if (tokenSupportAllFilters && extendLimit < level)
@@ -110,7 +127,7 @@ namespace Telemetry.Providers.ConfigFile
 
             foreach (var constrict in setting.Constricts)
             {
-                var constrictLimit = selector(constrict.Level);
+                var constrictLimit = constrict.GetThreshold(kind);
                 var tokenSupportAllFilters =
                     constrict.Filters.All(m => _activationContext.HasToken(m.Path));
                 if (tokenSupportAllFilters && constrictLimit > level) 

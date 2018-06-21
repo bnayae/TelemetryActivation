@@ -46,12 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTOs\Activation\ActivationLevel.cs" />
+    <Compile Include="DTOs\Activation\ActivationThreshold.cs" />
     <Compile Include="DTOs\Activation\ActivationUnit.cs" />
     <Compile Include="DTOs\Activation\ActivationSetting.cs" />
     <Compile Include="DTOs\Activation\ActivationItem.cs" />
     <Compile Include="DTOs\Activation\ActivationFilter.cs" />
     <Compile Include="Enums\CommonLayerOrService.cs" />
+    <Compile Include="Enums\TelemetryActivationKind.cs" />
     <Compile Include="Interfaces\ISimpleConfig.cs" />
     <Compile Include="Interfaces\Metrics\IMetricsReporterContext.cs" />
     <Compile Include="Enums\ImportanceLevel.cs" />

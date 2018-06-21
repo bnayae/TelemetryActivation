@@ -71,8 +71,8 @@ namespace Telemetry.Providers.ConfigFile
             {
                 yield return new KeyValuePair<string, ActivationUnit>(element.Key, 
                     new ActivationUnit(
-                            element.MetricThreshold,
-                            element.TextualThreshold,
+                            //element.MetricThreshold,
+                            //element.TextualThreshold,
                             element.Constricts,
                             element.Extends));
             }

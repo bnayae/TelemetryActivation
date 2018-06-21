@@ -18,53 +18,53 @@ namespace Telemetry.Providers.ConfigFile
         private const string METRIC_THRESHOLD = "metric-threshold";
         private const string TEXTUAL_THRESHOLD = "textual-threshold";
 
-        #region MetricThreshold
+        //#region MetricThreshold
 
-        [ConfigurationProperty(METRIC_THRESHOLD,
-            DefaultValue = nameof(ImportanceLevel.Normal),
-            IsRequired = false)]
-        //[RegexStringValidator("(Low|Normal|High)")]
-        //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public ImportanceLevel MetricThreshold
-        {
-            get
-            {
-                object val = this[METRIC_THRESHOLD];
-                if (val == null)
-                    return 0;
-                return (ImportanceLevel)val;
-            }
-            set
-            {
-                this[METRIC_THRESHOLD] = value;
-            }
-        }
+        //[ConfigurationProperty(METRIC_THRESHOLD,
+        //    DefaultValue = nameof(ImportanceLevel.Normal),
+        //    IsRequired = false)]
+        ////[RegexStringValidator("(Low|Normal|High)")]
+        ////[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
+        //public ImportanceLevel MetricThreshold
+        //{
+        //    get
+        //    {
+        //        object val = this[METRIC_THRESHOLD];
+        //        if (val == null)
+        //            return 0;
+        //        return (ImportanceLevel)val;
+        //    }
+        //    set
+        //    {
+        //        this[METRIC_THRESHOLD] = value;
+        //    }
+        //}
 
-        #endregion // MetricThreshold
+        //#endregion // MetricThreshold
 
-        #region TextualThreshold
+        //#region TextualThreshold
 
-        [ConfigurationProperty(TEXTUAL_THRESHOLD,
-            DefaultValue = nameof(LogEventLevel.Information),
-            IsRequired = false)]
-        //[RegexStringValidator("(Verbose|Debug|Information|Warning|Error|Fatal)")]
-        //[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
-        public LogEventLevel TextualThreshold
-        {
-            get
-            {
-                object val = this[TEXTUAL_THRESHOLD];
-                if (val == null)
-                    return 0;
-                return (LogEventLevel)val;
-            }
-            set
-            {
-                this[TEXTUAL_THRESHOLD] = value;
-            }
-        }
+        //[ConfigurationProperty(TEXTUAL_THRESHOLD,
+        //    DefaultValue = nameof(LogEventLevel.Information),
+        //    IsRequired = false)]
+        ////[RegexStringValidator("(Verbose|Debug|Information|Warning|Error|Fatal)")]
+        ////[StringValidator(InvalidCharacters = "  ~!@#$%^&*()[]{}/;’\"|\\")]
+        //public LogEventLevel TextualThreshold
+        //{
+        //    get
+        //    {
+        //        object val = this[TEXTUAL_THRESHOLD];
+        //        if (val == null)
+        //            return 0;
+        //        return (LogEventLevel)val;
+        //    }
+        //    set
+        //    {
+        //        this[TEXTUAL_THRESHOLD] = value;
+        //    }
+        //}
 
-        #endregion // TextualThreshold
+        //#endregion // TextualThreshold
 
         #region Constricts
 
@@ -106,8 +106,8 @@ namespace Telemetry.Providers.ConfigFile
             }
 
 
-            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
-            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
+            //public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+            //public LogEventLevel TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ConfigItemElement[] Constricts

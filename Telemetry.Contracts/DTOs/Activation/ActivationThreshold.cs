@@ -12,32 +12,32 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    [DebuggerDisplay("{MetricThreshold}, {TextualThreshold}")]
-    public struct ActivationLevel //: IEquatable<ActivationLevel>
+    [DebuggerDisplay("{Metric}, {Textual}")]
+    public struct ActivationThreshold //: IEquatable<ActivationLevel>
     {
         #region Ctor
 
-        public ActivationLevel(
+        public ActivationThreshold(
             ImportanceLevel metricThreshold,
             LogEventLevel textualThreshold)
         {
-            MetricThreshold = metricThreshold;
-            TextualThreshold = textualThreshold;
+            Metric = metricThreshold;
+            Textual = textualThreshold;
         }
 
         #endregion // Ctor
 
-        #region MetricThreshold
+        #region Metric
 
-        public ImportanceLevel MetricThreshold { get; }
+        public ImportanceLevel Metric { get; }
 
-        #endregion // MetricThreshold
+        #endregion // Metric
 
-        #region TextualThreshold
+        #region Textual
 
-        public LogEventLevel TextualThreshold { get; }
+        public LogEventLevel Textual { get; }
 
-        #endregion // TextualThreshold
+        #endregion // Textual
 
         //#region Equality Pattern
 

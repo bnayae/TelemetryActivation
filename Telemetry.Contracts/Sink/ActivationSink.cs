@@ -13,7 +13,7 @@ namespace Serilog
 {
     public static class ActivationSinkExtensions
     {
-        public static LoggerConfiguration ActivationSink(
+        public static LoggerConfiguration WithActivation(
             this LoggerSinkConfiguration sinkConfiguration, 
             ITelemetryActivation activation,
             string channelKey,

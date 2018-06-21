@@ -23,8 +23,8 @@ namespace Contracts
         ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
         /// </returns>
         bool IsActive(
-            ImportanceLevel metricLevel,
-            string channelKey = null);
+                ImportanceLevel metricLevel,
+                string channelKey = null);
 
         /// <summary>
         /// Determines whether the specified log level is active.
@@ -35,7 +35,7 @@ namespace Contracts
         ///   <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
         /// </returns>
         bool IsActive(
-             LogEventLevel level,
-             string channelKey = null);
+                LogEventLevel level,
+                string channelKey = null);
     }
 }

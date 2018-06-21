@@ -22,8 +22,10 @@ namespace Telemetry.Implementation
             LoggerConfiguration setting,
             ITelemetryActivation activation)
         {
+            // will be handle by the activation
+            var minLevel = activation.TextualThreshold < LogEventLevel.Debug ? activation.TextualThreshold : LogEventLevel.Debug;
             setting = setting
-                    .MinimumLevel.Is(activation.TextualThreshold)
+                    .MinimumLevel.Is(minLevel)
                     .Filter.ByIncludingOnly(l => activation.IsActive(l.Level))
                     .Enrich.With<Enrichment>();
 

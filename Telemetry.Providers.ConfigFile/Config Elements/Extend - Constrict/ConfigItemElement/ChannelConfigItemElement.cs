@@ -56,8 +56,8 @@ namespace Telemetry.Providers.ConfigFile
             public string Key => _instance.Key;
 
 
-            public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
-            public LogEventLevel TextualThreshold => _instance.TextualThreshold;
+            //public ImportanceLevel MetricThreshold => _instance.MetricThreshold;
+            //public LogEventLevel TextualThreshold => _instance.TextualThreshold;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ConfigItemElement[] Constricts

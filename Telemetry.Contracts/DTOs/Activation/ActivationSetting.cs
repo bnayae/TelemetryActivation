@@ -24,12 +24,17 @@ namespace Contracts
             IEnumerable<ActivationItem> constricts,
             IEnumerable<ActivationItem> extends,
             IEnumerable<KeyValuePair<string, ActivationUnit>> channels)
-            : base(metricThreshold, textualThreshold, constricts, extends)
+            : base(/*metricThreshold, textualThreshold, */constricts, extends)
         {
+            Threshold = new ActivationThreshold(metricThreshold, textualThreshold);
             Channels = new ConcurrentDictionary<string, ActivationUnit>(channels);
         }
 
         #endregion // Ctor
+
+        #region Threshold
+        public ActivationThreshold Threshold { get; }
+        #endregion // Threshold
 
         #region Channels
 
@@ -52,10 +57,10 @@ namespace Contracts
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ImportanceLevel MetricThreshold => _instance.Level.MetricThreshold;
+            public ImportanceLevel MetricThreshold => _instance.Threshold.Metric;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public LogEventLevel TextualThreshold => _instance.Level.TextualThreshold;
+            public LogEventLevel TextualThreshold => _instance.Threshold.Textual;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Constricts => _instance.Constricts.ToArray();
