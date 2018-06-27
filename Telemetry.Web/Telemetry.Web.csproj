@@ -284,6 +284,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Telemetry.Bootstrapper\Telemetry.Bootstrapper.csproj">
+      <Project>{f3cb8006-b4f1-4f2a-973c-63c7101f65f6}</Project>
+      <Name>Telemetry.Bootstrapper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telemetry.Contracts\Telemetry.Contracts.csproj">
       <Project>{cf90b0f0-b4e3-40ee-a8df-90d5c0d87fe0}</Project>
       <Name>Telemetry.Contracts</Name>

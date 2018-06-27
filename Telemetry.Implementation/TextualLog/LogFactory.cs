@@ -9,16 +9,16 @@ namespace Telemetry.Implementation
 {
     public class LogFactory : ILogFactory
     {
-        public static void SetLogFactory(
-            LoggerConfiguration setting,
-            ITelemetryActivation activation)
-        {
-            Current = new LogFactory(setting, activation);
-        }
-        public static ILogFactory Current { get; private set; }
+        //public static void SetLogFactory(
+        //    LoggerConfiguration setting,
+        //    ITelemetryActivation activation)
+        //{
+        //    Current = new LogFactory(setting, activation);
+        //}
+        //public static ILogFactory Current { get; private set; }
 
         private readonly ILogger _logger;
-        private LogFactory(
+        public LogFactory(
             LoggerConfiguration setting,
             ITelemetryActivation activation)
         {

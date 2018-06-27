@@ -20,7 +20,7 @@ namespace WebToInfluxTake2.Controllers
         {
             //logFactory = logFactory ?? LogFactory.Current;
             //_logger = logFactory.Create<ValuesController>();
-            _logger = LogFactory.Current.Create<ValuesController>();
+            _logger = Reporter.Default.LogFactory.Create<ValuesController>();
 
         }
         // GET api/values

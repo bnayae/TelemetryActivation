@@ -53,6 +53,7 @@
     <Compile Include="DTOs\Activation\ActivationFilter.cs" />
     <Compile Include="Enums\CommonLayerOrService.cs" />
     <Compile Include="Enums\TelemetryActivationKind.cs" />
+    <Compile Include="Interfaces\IReporter.cs" />
     <Compile Include="Interfaces\ISimpleConfig.cs" />
     <Compile Include="Interfaces\Metrics\IMetricsReporterContext.cs" />
     <Compile Include="Enums\ImportanceLevel.cs" />
