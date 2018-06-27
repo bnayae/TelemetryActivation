@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telemetry.Providers.ConfigFile;
+using Serilog.Settings.Configuration;
 
 namespace Telemetry.Implementation
 {
@@ -43,9 +44,15 @@ namespace Telemetry.Implementation
             Metric = builder.Build();
 
             var activation = _activationFactory.Create();
+
+            //var configuration = new ConfigurationBuilder()
+            //                     .AddJsonFile("TelemetryConfig.json")
+            //                     .Build();
+
             var logConfig = new LoggerConfiguration();
             logConfig = logConfig
                             .MinimumLevel.Verbose()
+                                .MinimumLevel.Override("WebToInfluxTake2.Controllers.DataController",LogEventLevel.Warning)
                             .WriteTo.File("log.debug.txt", restrictedToMinimumLevel: LogEventLevel.Debug, outputTemplate: FORMAT)
                             .WriteTo.File("log.error.txt", restrictedToMinimumLevel: LogEventLevel.Error, outputTemplate: FORMAT)
                             .WriteTo.File("log.warn.txt", restrictedToMinimumLevel: LogEventLevel.Warning, outputTemplate: FORMAT)
