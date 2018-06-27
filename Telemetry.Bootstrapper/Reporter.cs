@@ -50,7 +50,7 @@ namespace Telemetry.Implementation
             //                     .Build();
 
             var logConfig = new LoggerConfiguration();
-            logConfig = logConfig
+            logConfig = logConfig//.ReadFrom.AppSettings()
                             .MinimumLevel.Verbose()
                                 .MinimumLevel.Override("WebToInfluxTake2.Controllers.DataController",LogEventLevel.Warning)
                             .WriteTo.File("log.debug.txt", restrictedToMinimumLevel: LogEventLevel.Debug, outputTemplate: FORMAT)
