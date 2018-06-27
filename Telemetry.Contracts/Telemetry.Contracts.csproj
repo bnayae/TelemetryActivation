@@ -68,7 +68,6 @@
     <Compile Include="Interfaces\TextualLog\ILogFactory.cs" />
     <Compile Include="Interfaces\TextualLog\ILoggerSinkProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sink\ActivationSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

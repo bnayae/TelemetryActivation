@@ -32,7 +32,7 @@ namespace Telemetry.Providers.ConfigFile
             {
                 object val = this[METRIC_THRESHOLD];
                 if (val == null)
-                    return 0;
+                    return ImportanceLevel.Low;
                 return (ImportanceLevel)val;
             }
             set
@@ -56,7 +56,7 @@ namespace Telemetry.Providers.ConfigFile
             {
                 object val = this[TEXTUAL_THRESHOLD];
                 if (val == null)
-                    return 0;
+                    return LogEventLevel.Information;
                 return (LogEventLevel)val;
             }
             set

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [DebuggerTypeProxy(typeof(DebugView))]
+    [DebuggerDisplay("{Threshold.Metric}, {Threshold.Textual}")]
     public class ActivationSetting : ActivationUnit
     {
         #region Ctor
@@ -22,12 +23,10 @@ namespace Contracts
             ImportanceLevel metricThreshold,
             LogEventLevel textualThreshold,
             IEnumerable<ActivationItem> constricts,
-            IEnumerable<ActivationItem> extends,
-            IEnumerable<KeyValuePair<string, ActivationUnit>> channels)
+            IEnumerable<ActivationItem> extends)
             : base(/*metricThreshold, textualThreshold, */constricts, extends)
         {
             Threshold = new ActivationThreshold(metricThreshold, textualThreshold);
-            Channels = new ConcurrentDictionary<string, ActivationUnit>(channels);
         }
 
         #endregion // Ctor
@@ -35,15 +34,6 @@ namespace Contracts
         #region Threshold
         public ActivationThreshold Threshold { get; }
         #endregion // Threshold
-
-        #region Channels
-
-        /// <summary>
-        /// Gets the channels.
-        /// </summary>
-        public ConcurrentDictionary<string, ActivationUnit> Channels { get; }
-
-        #endregion // Channels
 
         #region DebugView
 
@@ -67,8 +57,6 @@ namespace Contracts
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public ActivationItem[] Extends => _instance.Extends.ToArray();
-
-            public IDictionary<string, ActivationUnit> Channels => _instance.Channels;
         }
 
         #endregion // DebugView

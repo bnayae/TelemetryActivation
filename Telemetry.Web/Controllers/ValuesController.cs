@@ -27,8 +27,10 @@ namespace WebToInfluxTake2.Controllers
         public async Task<string> Get()
         {
             await Task.Delay(1000).ConfigureAwait(false);
+            _logger.Verbose("Verbose log");
             _logger.Debug("Debug log");
             _logger.Information("Info log");
+            _logger.Warning("Warn log");
             _logger.Error("Error log");
             return "ok";
         }

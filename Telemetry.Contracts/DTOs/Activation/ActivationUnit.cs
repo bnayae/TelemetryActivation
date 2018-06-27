@@ -52,9 +52,9 @@ namespace Contracts
 
         internal class DebugView
         {
-            private ActivationSetting _instance;
+            private ActivationUnit _instance;
 
-            public DebugView(ActivationSetting instance)
+            public DebugView(ActivationUnit instance)
             {
                 this._instance = instance;
             }

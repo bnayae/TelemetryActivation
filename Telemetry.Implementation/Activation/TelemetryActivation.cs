@@ -44,15 +44,13 @@ namespace Telemetry.Providers.ConfigFile
         /// Determines whether the specified metric level is active.
         /// </summary>
         /// <param name="level">The metric level.</param>
-        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         ///   <c>true</c> if the specified metric level is active; otherwise, <c>false</c>.
         /// </returns>
         public bool IsActive(
-                ImportanceLevel level,
-                string channelKey = null)
+                ImportanceLevel level)
         {
-            return IsActive((int)level, TelemetryActivationKind.Metric, channelKey);
+            return IsActive((int)level, TelemetryActivationKind.Metric);
 
         }
 
@@ -60,29 +58,24 @@ namespace Telemetry.Providers.ConfigFile
         /// Determines whether the specified log level is active.
         /// </summary>
         /// <param name="level">The log level.</param>
-        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         /// <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsActive(
-                LogEventLevel level,
-                string channelKey = null)
+        public bool IsActive(LogEventLevel level)
         {
-            return IsActive((int)level, TelemetryActivationKind.Textual, channelKey);
+            return IsActive((int)level, TelemetryActivationKind.Textual);
         }
 
         /// <summary>
         /// Determines whether the specified log level is active.
         /// </summary>
         /// <param name="level">The log level.</param>
-        /// <param name="channelKey">The channel key.</param>
         /// <returns>
         /// <c>true</c> if the specified log level is active; otherwise, <c>false</c>.
         /// </returns>
         private bool IsActive(
                 int level,
-                TelemetryActivationKind kind,
-                string channelKey = null)
+                TelemetryActivationKind kind)
         {
             #region int minLevel = ...
 
@@ -101,9 +94,7 @@ namespace Telemetry.Providers.ConfigFile
 
             #endregion // int minLevel = ...
 
-            if (!TryGetSettingUnit(channelKey, out ActivationUnit setting))
-                return true; // the root level filtering should dictate the result when channel level is empty 
-
+            ActivationUnit setting = _setting;
             if (level < minLevel)
             {
                 // Disable unless extends (setting.TextualThreshold)
@@ -114,7 +105,7 @@ namespace Telemetry.Providers.ConfigFile
                     var extendLimit = extend.GetThreshold(kind);
                     var tokenSupportAllFilters =
                         extend.Filters.All(m => _activationContext.HasToken(m.Path));
-                    if (tokenSupportAllFilters && extendLimit < level)
+                    if (tokenSupportAllFilters && extendLimit <= level)
                         return true;
                 }
                 return false;
@@ -139,31 +130,6 @@ namespace Telemetry.Providers.ConfigFile
         }
 
         #endregion // IsActive
-
-        #region TryGetSettingUnit
-
-        /// <summary>
-        /// Gets the setting unit (root or channel level).
-        /// </summary>
-        /// <param name="channelKey">The channel key.</param>
-        /// <param name="setting">The setting.</param>
-        /// <returns>false when channel key != null and missing from configuration</returns>
-        private bool TryGetSettingUnit(
-                string channelKey,
-                out ActivationUnit setting)
-        {
-            setting = null;
-            if (string.IsNullOrEmpty(channelKey))
-                setting = _setting; // root level
-            else // channel level
-            {
-                if (_setting.Channels.TryGetValue(channelKey, out ActivationUnit unit))
-                    setting = unit;
-            }
-            return setting != null;
-        }
-
-        #endregion // TryGetSettingUnit
 
         #region DebugView
 

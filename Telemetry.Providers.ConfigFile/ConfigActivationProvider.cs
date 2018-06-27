@@ -25,8 +25,7 @@ namespace Telemetry.Providers.ConfigFile
                             config.MetricThreshold,
                             config.TextualThreshold,
                             config.Constricts,
-                            config.Extends,
-                            config.Channels);
+                            config.Extends);
             _activation = new TelemetryActivation(setting, activationContext);
         }
 

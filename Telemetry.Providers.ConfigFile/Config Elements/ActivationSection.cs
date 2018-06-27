@@ -94,20 +94,6 @@ namespace Telemetry.Providers.ConfigFile
 
         #endregion // Extends
 
-        #region Channels
-
-        [ConfigurationProperty("channels", IsDefaultCollection = false)]
-        public ChannelCollection Channels
-        {
-            get
-            {
-                var hostCollection = (ChannelCollection)base["channels"];
-                return hostCollection;
-            }
-        }
-
-        #endregion // Channels
-
         #region DebugView
 
         internal class DebugView
@@ -154,9 +140,6 @@ namespace Telemetry.Providers.ConfigFile
                     }
                 }
             }
-
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ChannelCollection Channels => _instance.Channels;
         }
 
         #endregion // DebugView

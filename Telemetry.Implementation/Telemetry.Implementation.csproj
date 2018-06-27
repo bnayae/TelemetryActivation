@@ -53,7 +53,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activation\TelemetryActivationSinkDecorator.cs" />
     <Compile Include="SimpleConfig.cs" />
     <Compile Include="TelemetryPushContext.cs" />
     <Compile Include="TelemetryTagContext.cs" />

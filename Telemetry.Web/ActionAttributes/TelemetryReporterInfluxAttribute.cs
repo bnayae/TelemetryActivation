@@ -45,24 +45,18 @@ namespace WebToInflux
             var logConfig = new LoggerConfiguration();
             logConfig = logConfig
                             .MinimumLevel.Verbose()
-                            .WriteTo.WithActivation(
-                                activation, "ignore",
-                                s => s.File(
-                                    "log.txt",
+                            .WriteTo.File(
+                                    "log.debug.txt",
                                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
-                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
-                            .WriteTo.WithActivation(
-                                activation, "error",
-                                s => s.File(
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                            .WriteTo.File(
                                     "log.error.txt",
-                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
-                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
-                            .WriteTo.WithActivation(
-                                activation, "warn",
-                                s => s.File(
+                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                            .WriteTo.File(
                                     "log.warn.txt",
-                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
-                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
+                                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning,
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
                             ;
                             //.WriteTo.WithActivation(
                             //    activation, "seq",
